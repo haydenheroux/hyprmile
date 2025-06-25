@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-neutral-950;
+    font-family: "Martian Mono", monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 80;
+  }
+
+  hr {
+    @apply w-64 lg:w-128 mx-auto text-neutral-600;
+  }
+}
