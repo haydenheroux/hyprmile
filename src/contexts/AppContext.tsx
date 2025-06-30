@@ -9,7 +9,7 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [view, setView] = useState<View>(View.Calculate);
+  const [view, setView] = useState<View>(View.Input);
   const ctx: AppContextType = { view, setView };
 
   return <AppContext.Provider value={ctx}>{children}</AppContext.Provider>;

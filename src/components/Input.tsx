@@ -1,8 +1,13 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
+import { IoMdClose } from "react-icons/io";
 
-type FormState =
-  | { date: Date; mode: "odometer"; odometerMiles: string; gallons: string}
-  | { date: Date; mode: "trip"; tripMiles: string; gallons: string};
+type FormState = {
+  date: Date;
+  mode: "odometer" | "trip";
+  odometerMiles: string;
+  tripMiles: string;
+  gallons: string;
+};
 
 type FormAction =
   | { type: "date"; value: string }
@@ -14,15 +19,16 @@ type FormAction =
 function reducer(state: FormState, action: FormAction): FormState {
   switch (action.type) {
     case "date": {
-      const date = action.value === "" ? new Date() : new Date(action.value);
+      const cleared = action.value === "";
+      const date = cleared ? new Date() : new Date(action.value);
       return { ...state, date };
     }
     case "gallons":
       return { ...state, gallons: action.value };
     case "odometer":
-      return { ...state, mode: "odometer", odometerMiles: "" };
+      return { ...state, mode: "odometer" };
     case "trip":
-      return { ...state, mode: "trip", tripMiles: "" };
+      return { ...state, mode: "trip" };
     case "miles": {
       if (state.mode === "odometer") {
         return { ...state, odometerMiles: action.value };
@@ -39,10 +45,42 @@ function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
 }
 
-function handleSubmit(state: FormState) {
-  const tripMiles = state.mode === "odometer" ? Number(state.odometerMiles) - 200_000 : Number(state.tripMiles);
-  const mpg = tripMiles / Number(state.gallons);
-  alert(`${mpg.toFixed(1)} miles per gallon`);
+function previousOdometerMiles(): number {
+  return 200_637;
+}
+
+function calculateTripMiles(state: FormState): number | null {
+  switch (state.mode) {
+    case "odometer": {
+      const difference = Number(state.odometerMiles) - previousOdometerMiles();
+      if (difference < 0) {
+        return null;
+      }
+      return difference;
+    }
+    case "trip":
+      return Number(state.tripMiles);
+    default:
+      return 0.0;
+  }
+}
+
+function handleSubmit(
+  setMPG: (mpg: number) => void,
+  setShowMPG: (show: boolean) => void,
+  state: FormState,
+) {
+  const tripMiles = calculateTripMiles(state);
+  if (tripMiles === null) {
+    return;
+  }
+  const gallons = Number(state.gallons);
+  // TODO Implement alternative way to detect failure condition
+  if (isNaN(gallons)) {
+    return;
+  }
+  setMPG(tripMiles / gallons);
+  setShowMPG(true);
 }
 
 function Input() {
@@ -50,8 +88,12 @@ function Input() {
     date: new Date(),
     mode: "odometer",
     odometerMiles: "",
+    tripMiles: "",
     gallons: "",
   });
+
+  const [mpg, setMPG] = useState<number>(0);
+  const [showMPG, setShowMPG] = useState<boolean>(false);
 
   return (
     <div className="w-screen lg:w-96 mx-auto my-6 px-8 flex flex-col gap-4">
@@ -97,14 +139,35 @@ function Input() {
         step={0.1}
         className="text-neutral-100"
         value={
-          state.mode === "odometer"
-            ? state.odometerMiles
-            : state.tripMiles
+          state.mode === "odometer" ? state.odometerMiles : state.tripMiles
         }
         placeholder="0.0"
         onChange={(e) => dispatch({ type: "miles", value: e.target.value })}
       />
-      <input type="submit" className="button-active" value="Submit" onClick={() => handleSubmit(state)} />
+      <input
+        type="submit"
+        className="button-active"
+        value="Submit"
+        onClick={() => handleSubmit(setMPG, setShowMPG, state)}
+      />
+      <div
+        className={`relative border-1 border-neutral-800 rounded-lg bg-linear-to-t from-neutral-950 to-neutral-900 p-2 transition-opacity ${showMPG ? "opacity-100" : "opacity-0"} duration-150 ease-in-out`}
+      >
+        <span
+          tabIndex={0}
+          className="absolute right-2 top-1 text-neutral-500"
+          onClick={() => setShowMPG(false)}
+        >
+          <IoMdClose size={24} />
+        </span>
+        <span className="text-xl font-bold text-neutral-100 ">
+          MPG Recorded
+        </span>
+        <br />
+        <span className="text-neutral-500">
+          {mpg.toFixed(1)} miles / gallon
+        </span>
+      </div>
     </div>
   );
 }
