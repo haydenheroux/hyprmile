@@ -1,35 +1,51 @@
 import { useReducer } from "react";
 
-type FormState =
-  | { date: Date; mode: "odometer"; odometerMiles: string; gallons: string}
-  | { date: Date; mode: "trip"; tripMiles: string; gallons: string};
+type FormState = {
+  date: Date;
+  mode: "odometer" | "trip";
+  odometerMiles: string;
+  tripMiles: string;
+  gallons: string;
+};
 
+// TODO "...Blur" states replicate same functionality
 type FormAction =
   | { type: "date"; value: string }
-  | { type: "gallons"; value: string }
+  | { type: "gallonsChange"; value: string }
+  | { type: "gallonsBlur"; value: string }
   | { type: "odometer" }
   | { type: "trip" }
-  | { type: "miles"; value: string };
+  | { type: "milesChange"; value: string }
+  | { type: "milesBlur"; value: string };
 
 function reducer(state: FormState, action: FormAction): FormState {
+  console.log(state, action);
   switch (action.type) {
     case "date": {
       const date = action.value === "" ? new Date() : new Date(action.value);
       return { ...state, date };
     }
-    case "gallons":
+    case "gallonsChange":
       return { ...state, gallons: action.value };
+    case "gallonsBlur":
+      return { ...state, gallons: Gallons.format(action.value) };
     case "odometer":
-      return { ...state, mode: "odometer", odometerMiles: "" };
+      return { ...state, mode: "odometer" };
     case "trip":
-      return { ...state, mode: "trip", tripMiles: "" };
-    case "miles": {
+      return { ...state, mode: "trip" };
+    case "milesChange": {
       if (state.mode === "odometer") {
         return { ...state, odometerMiles: action.value };
       } else {
         return { ...state, tripMiles: action.value };
       }
     }
+    case "milesBlur":
+      if (state.mode === "odometer") {
+        return { ...state, odometerMiles: Mileage.format(action.value) };
+      } else {
+        return { ...state, tripMiles: Mileage.format(action.value) };
+      }
     default:
       return state;
   }
@@ -39,8 +55,39 @@ function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
 }
 
+type IncrementAmount = {
+  step: number;
+  format: (number: number | string) => string;
+};
+
+function formatNumber(number: number | string, fractionDigits: number): string {
+  const numberFormat = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
+
+  if (typeof number === "string" && number === "") return "";
+
+  const num =
+    typeof number === "number" ? number : parseFloat(number.replace(",", ""));
+  return numberFormat.format(num);
+}
+
+function createIncrementAmount(fractionDigits: number): IncrementAmount {
+  return {
+    step: 10 ** -fractionDigits,
+    format: (number: number | string) => formatNumber(number, fractionDigits),
+  };
+}
+
+const Mileage = createIncrementAmount(1);
+const Gallons = createIncrementAmount(3);
+
 function handleSubmit(state: FormState) {
-  const tripMiles = state.mode === "odometer" ? Number(state.odometerMiles) - 200_000 : Number(state.tripMiles);
+  const tripMiles =
+    state.mode === "odometer"
+      ? Number(state.odometerMiles) - 200_000
+      : Number(state.tripMiles);
   const mpg = tripMiles / Number(state.gallons);
   alert(`${mpg.toFixed(1)} miles per gallon`);
 }
@@ -50,6 +97,7 @@ function Input() {
     date: new Date(),
     mode: "odometer",
     odometerMiles: "",
+    tripMiles: "",
     gallons: "",
   });
 
@@ -68,12 +116,14 @@ function Input() {
         <span className="text-neutral-100 text-xl">Gallons</span>
       </div>
       <input
-        type="number"
-        step={0.001}
+        type="text"
         className="text-neutral-100"
         value={state.gallons}
-        placeholder="0.000"
-        onChange={(e) => dispatch({ type: "gallons", value: e.target.value })}
+        placeholder={Gallons.format(0)}
+        onChange={(e) =>
+          dispatch({ type: "gallonsChange", value: e.target.value })
+        }
+        onBlur={(e) => dispatch({ type: "gallonsBlur", value: e.target.value })}
       />
       <div className="flex justify-between items-center h-8">
         <span className="text-neutral-100 text-xl">Miles</span>
@@ -93,18 +143,23 @@ function Input() {
         </div>
       </div>
       <input
-        type="number"
-        step={0.1}
+        type="text"
         className="text-neutral-100"
         value={
-          state.mode === "odometer"
-            ? state.odometerMiles
-            : state.tripMiles
+          state.mode === "odometer" ? state.odometerMiles : state.tripMiles
         }
-        placeholder="0.0"
-        onChange={(e) => dispatch({ type: "miles", value: e.target.value })}
+        placeholder={Mileage.format(0)}
+        onChange={(e) =>
+          dispatch({ type: "milesChange", value: e.target.value })
+        }
+        onBlur={(e) => dispatch({ type: "milesBlur", value: e.target.value })}
       />
-      <input type="submit" className="button-active" value="Submit" onClick={() => handleSubmit(state)} />
+      <input
+        type="submit"
+        className="button-active"
+        value="Submit"
+        onClick={() => handleSubmit(state)}
+      />
     </div>
   );
 }
