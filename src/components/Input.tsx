@@ -14,33 +14,45 @@ type FormData = {
   gallons: string;
 };
 
+// TODO "...Blur" states replicate same functionality
 type FormAction =
   | { type: "date"; value: string }
-  | { type: "gallons"; value: string }
+  | { type: "gallonsChange"; value: string }
+  | { type: "gallonsBlur"; value: string }
   | { type: "odometer" }
   | { type: "trip" }
-  | { type: "miles"; value: string };
+  | { type: "mileageChange"; value: string }
+  | { type: "mileageBlur"; value: string };
 
 function reducer(data: FormData, action: FormAction): FormData {
+  console.log(data, action);
   switch (action.type) {
     case "date": {
       const cleared = action.value === "";
       const date = cleared ? new Date() : new Date(action.value);
       return { ...data, date };
     }
-    case "gallons":
+    case "gallonsChange":
       return { ...data, gallons: action.value };
+    case "gallonsBlur":
+      return { ...data, gallons: Gallons.format(action.value) };
     case "odometer":
       return { ...data, mode: "odometer" };
     case "trip":
       return { ...data, mode: "trip" };
-    case "miles": {
+    case "mileageChange": {
       if (data.mode === "odometer") {
         return { ...data, odometerMileage: action.value };
       } else {
         return { ...data, tripMileage: action.value };
       }
     }
+    case "mileageBlur":
+      if (data.mode === "odometer") {
+        return { ...data, odometerMileage: Mileage.format(action.value) };
+      } else {
+        return { ...data, tripMileage: Mileage.format(action.value) };
+      }
     default:
       return data;
   }
@@ -49,6 +61,34 @@ function reducer(data: FormData, action: FormAction): FormData {
 function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
 }
+
+type IncrementAmount = {
+  step: number;
+  format: (number: number | string) => string;
+};
+
+function formatNumber(number: number | string, fractionDigits: number): string {
+  const numberFormat = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
+
+  if (typeof number === "string" && number === "") return "";
+
+  const num =
+    typeof number === "number" ? number : parseFloat(number.replace(",", ""));
+  return numberFormat.format(num);
+}
+
+function createIncrementAmount(fractionDigits: number): IncrementAmount {
+  return {
+    step: 10 ** -fractionDigits,
+    format: (number: number | string) => formatNumber(number, fractionDigits),
+  };
+}
+
+const Mileage = createIncrementAmount(1);
+const Gallons = createIncrementAmount(3);
 
 function Input() {
   const app = useAppContext();
@@ -147,12 +187,25 @@ function Input() {
         onChange={(e) => dispatch({ type: "date", value: e.target.value })}
       />
       <div className="flex justify-between items-center h-8">
-        <span className="text-neutral-100 text-xl">Mileage</span>
+        <span className="text-neutral-100 text-xl">Gallons</span>
+      </div>
+      <input
+        type="text"
+        className="text-neutral-100"
+        value={data.gallons}
+        placeholder={Gallons.format(0)}
+        onChange={(e) =>
+          dispatch({ type: "gallonsChange", value: e.target.value })
+        }
+        onBlur={(e) => dispatch({ type: "gallonsBlur", value: e.target.value })}
+      />
+      <div className="flex justify-between items-center h-8">
+        <span className="text-neutral-100 text-xl">Miles</span>
         <div className="flex gap-2 items-center">
           <span
             className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
           >
-            Prev. {app.previousOdometerMileage.prev} mi.
+            {Mileage.format(app.previousOdometerMileage.prev)} mi.
           </span>
           <span
             className={`${data.mode === "odometer" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
@@ -169,25 +222,16 @@ function Input() {
         </div>
       </div>
       <input
-        type="number"
-        step={0.1}
+        type="text"
         className="text-neutral-100"
         value={
           data.mode === "odometer" ? data.odometerMileage : data.tripMileage
         }
-        placeholder="0.0"
-        onChange={(e) => dispatch({ type: "miles", value: e.target.value })}
-      />
-      <div className="flex justify-between items-center h-8">
-        <span className="text-neutral-100 text-xl">Gallons</span>
-      </div>
-      <input
-        type="number"
-        step={0.001}
-        className="text-neutral-100"
-        value={data.gallons}
-        placeholder="0.000"
-        onChange={(e) => dispatch({ type: "gallons", value: e.target.value })}
+        placeholder={Mileage.format(0)}
+        onChange={(e) =>
+          dispatch({ type: "mileageChange", value: e.target.value })
+        }
+        onBlur={(e) => dispatch({ type: "mileageBlur", value: e.target.value })}
       />
       <input
         type="submit"
