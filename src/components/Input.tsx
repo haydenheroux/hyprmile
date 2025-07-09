@@ -67,6 +67,10 @@ type IncrementAmount = {
   format: (number: number | string) => string;
 };
 
+function parseNumber(number: string): number {
+  return parseFloat(number.replace(",", ""));
+}
+
 function formatNumber(number: number | string, fractionDigits: number): string {
   const numberFormat = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: fractionDigits,
@@ -76,7 +80,10 @@ function formatNumber(number: number | string, fractionDigits: number): string {
   if (typeof number === "string" && number === "") return "";
 
   const num =
-    typeof number === "number" ? number : parseFloat(number.replace(",", ""));
+    typeof number === "number" ? number : parseNumber(number);
+
+  if (isNaN(num)) return "";
+
   return numberFormat.format(num);
 }
 
@@ -119,7 +126,7 @@ function Input() {
       error("Gallons is empty");
       return;
     }
-    const gallons = Number(data.gallons);
+    const gallons = parseNumber(data.gallons);
     if (isNaN(gallons)) {
       error("Gallons is not a number");
       return;
@@ -139,7 +146,7 @@ function Input() {
           error("Odometer mileage is empty");
           return null;
         }
-        const odometerMileage = Number(data.odometerMileage);
+        const odometerMileage = parseNumber(data.odometerMileage);
         if (isNaN(odometerMileage)) {
           error("Odometer mileage is not a number");
           return null;
@@ -163,7 +170,7 @@ function Input() {
           error("Trip mileage is empty");
           return null;
         }
-        const tripMiles = Number(data.tripMileage);
+        const tripMiles = parseNumber(data.tripMileage);
         if (isNaN(tripMiles)) {
           error("Trip mileage is not a number");
           return null;
