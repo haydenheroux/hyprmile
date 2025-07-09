@@ -22,7 +22,7 @@ export function NavIcon({
           onClick();
         }
       }}
-      className={`${active ? "button-active min-w-56" : "button min-w-14 lg:min-w-36"} h-14 border-2 rounded-lg flex justify-center items-center gap-2 transition-[min-width] ease-in-out duration-150 shadow-xs`}
+      className={`${active ? "button-active min-w-56" : "button min-w-14 lg:min-w-36"} h-14 border-2 rounded-lg flex justify-center items-center gap-2 transition-[min-width] ease-in-out duration-150`}
     >
       <span
         className={`${active ? "text-neutral-950" : "text-neutral-100"} transition-[scale] ease-in-out duration-150`}
