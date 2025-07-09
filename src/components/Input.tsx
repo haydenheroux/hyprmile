@@ -1,5 +1,11 @@
 import { useReducer, useState } from "react";
 import { useAppContext } from "../contexts/AppContext";
+import {
+  Gallons,
+  Mileage,
+  MilesPerGallon,
+  parseNumber,
+} from "../utils/numeric";
 
 type FormState =
   | { state: "input" }
@@ -14,45 +20,45 @@ type FormData = {
   gallons: string;
 };
 
-// TODO "...Blur" states replicate same functionality
+function formatFormData(data: FormData): FormData {
+  return {
+    ...data,
+    odometerMileage: Mileage.format(data.odometerMileage),
+    tripMileage: Mileage.format(data.tripMileage),
+    gallons: Gallons.format(data.gallons),
+  };
+}
+
 type FormAction =
   | { type: "date"; value: string }
-  | { type: "gallonsChange"; value: string }
-  | { type: "gallonsBlur"; value: string }
+  | { type: "gallons"; value: string }
   | { type: "odometer" }
   | { type: "trip" }
-  | { type: "mileageChange"; value: string }
-  | { type: "mileageBlur"; value: string };
+  | { type: "mileage"; value: string }
+  | { type: "blur" };
 
 function reducer(data: FormData, action: FormAction): FormData {
-  console.log(data, action);
   switch (action.type) {
     case "date": {
       const cleared = action.value === "";
       const date = cleared ? new Date() : new Date(action.value);
       return { ...data, date };
     }
-    case "gallonsChange":
+    case "gallons":
       return { ...data, gallons: action.value };
-    case "gallonsBlur":
-      return { ...data, gallons: Gallons.format(action.value) };
     case "odometer":
       return { ...data, mode: "odometer" };
     case "trip":
       return { ...data, mode: "trip" };
-    case "mileageChange": {
+    case "mileage": {
       if (data.mode === "odometer") {
         return { ...data, odometerMileage: action.value };
       } else {
         return { ...data, tripMileage: action.value };
       }
     }
-    case "mileageBlur":
-      if (data.mode === "odometer") {
-        return { ...data, odometerMileage: Mileage.format(action.value) };
-      } else {
-        return { ...data, tripMileage: Mileage.format(action.value) };
-      }
+    case "blur":
+      return formatFormData(data);
     default:
       return data;
   }
@@ -61,41 +67,6 @@ function reducer(data: FormData, action: FormAction): FormData {
 function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
 }
-
-type IncrementAmount = {
-  step: number;
-  format: (number: number | string) => string;
-};
-
-function parseNumber(number: string): number {
-  return parseFloat(number.replace(",", ""));
-}
-
-function formatNumber(number: number | string, fractionDigits: number): string {
-  const numberFormat = new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-  });
-
-  if (typeof number === "string" && number === "") return "";
-
-  const num =
-    typeof number === "number" ? number : parseNumber(number);
-
-  if (isNaN(num)) return "";
-
-  return numberFormat.format(num);
-}
-
-function createIncrementAmount(fractionDigits: number): IncrementAmount {
-  return {
-    step: 10 ** -fractionDigits,
-    format: (number: number | string) => formatNumber(number, fractionDigits),
-  };
-}
-
-const Mileage = createIncrementAmount(1);
-const Gallons = createIncrementAmount(3);
 
 function Input() {
   const app = useAppContext();
@@ -116,19 +87,19 @@ function Input() {
   };
 
   const handleSubmit = (data: FormData) => {
-    const tripMiles = calculateTripMiles(data);
-    if (tripMiles === null) {
-      // NOTE It is `calculateTripMiles` responsibility to call `setState`
-      return;
-    }
-
     if (data.gallons === "") {
-      error("Gallons is empty");
+      error("Gallons field is empty");
       return;
     }
     const gallons = parseNumber(data.gallons);
     if (isNaN(gallons)) {
       error("Gallons is not a number");
+      return;
+    }
+
+    const tripMiles = calculateTripMiles(data);
+    if (tripMiles === null) {
+      // NOTE It is `calculateTripMiles` responsibility to call `error`
       return;
     }
 
@@ -143,12 +114,12 @@ function Input() {
     switch (data.mode) {
       case "odometer": {
         if (data.odometerMileage === "") {
-          error("Odometer mileage is empty");
+          error("Odometer mileage field is empty");
           return null;
         }
         const odometerMileage = parseNumber(data.odometerMileage);
         if (isNaN(odometerMileage)) {
-          error("Odometer mileage is not a number");
+          error("Odometer mileage field is not a number");
           return null;
         }
 
@@ -201,10 +172,8 @@ function Input() {
         className="text-neutral-100"
         value={data.gallons}
         placeholder={Gallons.format(0)}
-        onChange={(e) =>
-          dispatch({ type: "gallonsChange", value: e.target.value })
-        }
-        onBlur={(e) => dispatch({ type: "gallonsBlur", value: e.target.value })}
+        onChange={(e) => dispatch({ type: "gallons", value: e.target.value })}
+        onBlur={() => dispatch({ type: "blur" })}
       />
       <div className="flex justify-between items-center h-8">
         <span className="text-neutral-100 text-xl">Miles</span>
@@ -214,18 +183,18 @@ function Input() {
           >
             {Mileage.format(app.previousOdometerMileage.prev)} mi.
           </span>
-          <span
+          <button
             className={`${data.mode === "odometer" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
             onClick={() => dispatch({ type: "odometer" })}
           >
             Odo.
-          </span>
-          <span
+          </button>
+          <button
             className={`${data.mode === "trip" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
             onClick={() => dispatch({ type: "trip" })}
           >
             Trip
-          </span>
+          </button>
         </div>
       </div>
       <input
@@ -235,10 +204,8 @@ function Input() {
           data.mode === "odometer" ? data.odometerMileage : data.tripMileage
         }
         placeholder={Mileage.format(0)}
-        onChange={(e) =>
-          dispatch({ type: "mileageChange", value: e.target.value })
-        }
-        onBlur={(e) => dispatch({ type: "mileageBlur", value: e.target.value })}
+        onChange={(e) => dispatch({ type: "mileage", value: e.target.value })}
+        onBlur={() => dispatch({ type: "blur" })}
       />
       <input
         type="submit"
@@ -246,7 +213,7 @@ function Input() {
         value="Submit"
         onClick={() => handleSubmit(data)}
       />
-      <div
+      <button
         className={`button-error p-2 transition-opacity ${state.state === "error" ? "opacity-100 block" : "opacity-0 hidden"} duration-75 ease-in-out`}
         onClick={() => setState({ state: "input" })}
       >
@@ -255,7 +222,7 @@ function Input() {
         <span className="text-red-400">
           {state.state === "error" ? state.reason : null}
         </span>
-      </div>
+      </button>
       <div
         className={`button p-2 transition-opacity ${state.state === "complete" ? "opacity-100" : "opacity-0"} duration-75 ease-in-out`}
         onClick={() => setState({ state: "input" })}
@@ -265,7 +232,7 @@ function Input() {
         </span>
         <br />
         <span className="text-neutral-500">
-          {mpg.toFixed(1)} miles / gallon
+          {MilesPerGallon.format(mpg)} miles / gallon
         </span>
       </div>
     </div>
