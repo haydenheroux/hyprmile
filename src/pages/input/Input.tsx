@@ -1,68 +1,17 @@
 import { useReducer, useState } from "react";
-import { useAppContext } from "../contexts/AppContext";
 import {
   Gallons,
   Mileage,
   MilesPerGallon,
-  parseNumber,
-} from "../utils/numeric";
-
-type FormState =
-  | { state: "input" }
-  | { state: "error"; reason: string }
-  | { state: "complete" };
-
-type FormData = {
-  date: Date;
-  mode: "odometer" | "trip";
-  odometerMileage: string;
-  tripMileage: string;
-  gallons: string;
-};
-
-function formatFormData(data: FormData): FormData {
-  return {
-    ...data,
-    odometerMileage: Mileage.format(data.odometerMileage),
-    tripMileage: Mileage.format(data.tripMileage),
-    gallons: Gallons.format(data.gallons),
-  };
-}
-
-type FormAction =
-  | { type: "date"; value: string }
-  | { type: "gallons"; value: string }
-  | { type: "odometer" }
-  | { type: "trip" }
-  | { type: "mileage"; value: string }
-  | { type: "blur" };
-
-function reducer(data: FormData, action: FormAction): FormData {
-  switch (action.type) {
-    case "date": {
-      const cleared = action.value === "";
-      const date = cleared ? new Date() : new Date(action.value);
-      return { ...data, date };
-    }
-    case "gallons":
-      return { ...data, gallons: action.value };
-    case "odometer":
-      return { ...data, mode: "odometer" };
-    case "trip":
-      return { ...data, mode: "trip" };
-    case "mileage": {
-      if (data.mode === "odometer") {
-        return { ...data, odometerMileage: action.value };
-      } else {
-        return { ...data, tripMileage: action.value };
-      }
-    }
-    case "blur":
-      return formatFormData(data);
-    default:
-      return data;
-  }
-}
+  parseNumber
+} from "../../utils/numeric";
+import {
+  formReducer,
+  type FormState,
+  type FormData,
+  defaultFormData
+} from "./form.tsx";
+import { useAppContext } from "../../contexts/AppContext";
 
 function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
@@ -71,13 +20,7 @@ function formatYYYYMMDD(date: Date): string {
 function Input() {
   const app = useAppContext();
 
-  const [data, dispatch] = useReducer(reducer, {
-    date: new Date(),
-    mode: "odometer",
-    odometerMileage: "",
-    tripMileage: "",
-    gallons: "",
-  });
+  const [data, dispatch] = useReducer(formReducer, defaultFormData());
 
   const [mpg, setMPG] = useState<number>(0);
   const [state, setState] = useState<FormState>({ state: "input" });
@@ -86,7 +29,7 @@ function Input() {
     setState({ state: "error", reason });
   };
 
-  const handleSubmit = (data: FormData) => {
+  function handleSubmit(data: FormData) {
     if (data.gallons === "") {
       error("Gallons field is empty");
       return;
@@ -108,9 +51,9 @@ function Input() {
       setMPG(mpg);
       setState({ state: "complete" });
     }
-  };
+  }
 
-  const calculateTripMiles = (data: FormData): number | null => {
+  function calculateTripMiles(data: FormData): number | null {
     switch (data.mode) {
       case "odometer": {
         if (data.odometerMileage === "") {
@@ -151,7 +94,7 @@ function Input() {
       default:
         return 0.0;
     }
-  };
+  }
 
   return (
     <div className="w-screen lg:w-128 mx-auto my-6 px-8 flex flex-col gap-4">

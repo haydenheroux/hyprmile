@@ -2,7 +2,7 @@ import "./index.css";
 import { Nav } from "./components/Nav";
 import { AppProvider, useAppContext } from "./contexts/AppContext";
 import { View } from "./types/View";
-import Input from "./components/Input";
+import Input from "./pages/input/Input";
 
 function App() {
   return (
