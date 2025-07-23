@@ -1,8 +1,8 @@
-export const View = {
+export const Page = {
   Calculate: "Calculate",
   Input: "Input",
   Statistics: "Statistics",
 } as const;
 
-export type View = (typeof View)[keyof typeof View];
+export type Page = (typeof Page)[keyof typeof Page];
 

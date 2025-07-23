@@ -1,7 +1,7 @@
 import type { IconType } from "react-icons";
 import { NavIcon } from "./NavIcon";
 import { PiCalculator, PiChartLineUp, PiGasPump } from "react-icons/pi";
-import { View } from "../types/View";
+import { Page } from "../types/View";
 import { useAppContext } from "../contexts/AppContext";
 
 export function Nav() {
@@ -13,20 +13,20 @@ export function Nav() {
         Icon={Icon}
         text={text}
         key={text}
-        onClick={() => app.setView(view)}
-        active={app.view === view}
+        onClick={() => app.setPage(view)}
+        active={app.page === view}
       />
     );
   }
 
   const icons = {
-    [View.Input]: createNavIcon(View.Input, "Input", PiGasPump),
-    [View.Statistics]: createNavIcon(
-      View.Statistics,
+    [Page.Input]: createNavIcon(Page.Input, "Input", PiGasPump),
+    [Page.Statistics]: createNavIcon(
+      Page.Statistics,
       "Statistics",
       PiChartLineUp,
     ),
-    [View.Calculate]: createNavIcon(View.Calculate, "Calculate", PiCalculator),
+    [Page.Calculate]: createNavIcon(Page.Calculate, "Calculate", PiCalculator),
   };
 
   return (

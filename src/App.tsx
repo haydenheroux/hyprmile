@@ -1,32 +1,34 @@
 import "./index.css";
 import { Nav } from "./components/Nav";
 import { AppProvider, useAppContext } from "./contexts/AppContext";
-import { View } from "./types/View";
+import { Page } from "./types/View";
 import Input from "./pages/input/Input";
+import Calculate from "./pages/calculate/Calculate";
+import Statistics from "./pages/statistics/Statistics";
+import PageContainer from "./pages/PageContainer";
 
 function App() {
   return (
     <AppProvider>
       <Nav />
       <hr />
-      <Viewer />
+      <PageContainer>
+        <WhichPage />
+      </PageContainer>
     </AppProvider>
   );
 }
 
-function Viewer() {
+function WhichPage() {
   const app = useAppContext();
 
-  switch (app.view) {
-    case View.Calculate:
-      // TODO Implement calculate component
-      return <span className="text-neutral-50">Calculate</span>
-    case View.Input:
-      // TODO Implement input component
+  switch (app.page) {
+    case Page.Calculate:
+      return <Calculate />
+    case Page.Input:
       return <Input />
-    case View.Statistics:
-      // TODO Implement statistics component
-      return <span className="text-neutral-50">Statistics</span>
+    case Page.Statistics:
+      return <Statistics />
   }
 }
 

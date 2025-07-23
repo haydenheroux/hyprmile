@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { View } from "../types/View";
+import { Page } from "../types/View";
 import { DifferenceBuffer } from "../types/DifferenceBuffer";
 
 export interface AppContextType {
-  view: View;
-  setView: (view: View) => void;
+  page: Page;
+  setPage: (page: Page) => void;
   previousOdometerMileage: DifferenceBuffer;
   setPreviousOdometerMileage: (previousOdometerMiles: DifferenceBuffer) => void;
 }
@@ -12,12 +12,13 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [view, setView] = useState<View>(View.Input);
+  const [view, setView] = useState<Page>(Page.Input);
   const [previousOdometerMiles, setPreviousOdometerMiles] =
     useState<DifferenceBuffer>(new DifferenceBuffer(200_637));
+
   const ctx: AppContextType = {
-    view,
-    setView,
+    page: view,
+    setPage: setView,
     previousOdometerMileage: previousOdometerMiles,
     setPreviousOdometerMileage: setPreviousOdometerMiles,
   };

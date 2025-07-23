@@ -12,6 +12,7 @@ import {
   defaultFormData
 } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
+import Heading from "../../components/form/Heading";
 
 function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
@@ -96,20 +97,15 @@ function Input() {
     }
   }
 
-  return (
-    <div className="w-screen lg:w-128 mx-auto my-6 px-8 flex flex-col gap-4">
-      <div className="flex justify-between items-center h-8">
-        <span className="text-neutral-100 text-xl">Date</span>
-      </div>
+  return <>
+      <Heading value={"Date"} />
       <input
         type="date"
         className="text-neutral-100"
         value={formatYYYYMMDD(data.date)}
         onChange={(e) => dispatch({ type: "date", value: e.target.value })}
       />
-      <div className="flex justify-between items-center h-8">
-        <span className="text-neutral-100 text-xl">Gallons</span>
-      </div>
+      <Heading value={"Gallons"} />
       <input
         type="text"
         className="text-neutral-100"
@@ -118,8 +114,7 @@ function Input() {
         onChange={(e) => dispatch({ type: "gallons", value: e.target.value })}
         onBlur={() => dispatch({ type: "blur" })}
       />
-      <div className="flex justify-between items-center h-8">
-        <span className="text-neutral-100 text-xl">Miles</span>
+      <Heading value={"Miles"}>
         <div className="flex gap-2 items-center">
           <span
             className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
@@ -139,7 +134,7 @@ function Input() {
             Trip
           </button>
         </div>
-      </div>
+      </Heading>
       <input
         type="text"
         className="text-neutral-100"
@@ -178,8 +173,7 @@ function Input() {
           {MilesPerGallon.format(mpg)} miles / gallon
         </span>
       </div>
-    </div>
-  );
+    </>
 }
 
 export default Input;
