@@ -1,8 +1,3 @@
-import {
-  Gallons,
-  Mileage
-} from "../../utils/numeric";
-
 export type FormState =
   | { state: "input" }
   | { state: "error"; reason: string }
@@ -26,22 +21,12 @@ export function defaultFormData(): FormData {
   }
 }
 
-function formatFormData(data: FormData): FormData {
-  return {
-    ...data,
-    odometerMileage: Mileage.format(data.odometerMileage),
-    tripMileage: Mileage.format(data.tripMileage),
-    gallons: Gallons.format(data.gallons),
-  };
-}
-
 type FormAction =
   | { type: "date"; value: string }
   | { type: "gallons"; value: string }
   | { type: "odometer" }
   | { type: "trip" }
-  | { type: "mileage"; value: string }
-  | { type: "blur" };
+  | { type: "mileage"; value: string };
 
 export function formReducer(data: FormData, action: FormAction): FormData {
   switch (action.type) {
@@ -63,8 +48,6 @@ export function formReducer(data: FormData, action: FormAction): FormData {
         return { ...data, tripMileage: action.value };
       }
     }
-    case "blur":
-      return formatFormData(data);
     default:
       return data;
   }

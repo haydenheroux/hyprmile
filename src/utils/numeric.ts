@@ -1,4 +1,4 @@
-type NumericUnit = {
+export type NumericUnit = {
   increment: number;
   format: (number: number | string) => string;
 };

@@ -13,6 +13,7 @@ import {
 } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
+import NumericInput from "../../components/form/NumericInput.tsx";
 
 function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
@@ -101,18 +102,15 @@ function Input() {
       <Heading value={"Date"} />
       <input
         type="date"
-        className="text-neutral-100"
         value={formatYYYYMMDD(data.date)}
         onChange={(e) => dispatch({ type: "date", value: e.target.value })}
       />
       <Heading value={"Gallons"} />
-      <input
-        type="text"
-        className="text-neutral-100"
+      <NumericInput
         value={data.gallons}
-        placeholder={Gallons.format(0)}
-        onChange={(e) => dispatch({ type: "gallons", value: e.target.value })}
-        onBlur={() => dispatch({ type: "blur" })}
+        setValue={(value) => dispatch({ type: "gallons", value: value })}
+        unit={Gallons}
+        placeholder={0.0}
       />
       <Heading value={"Miles"}>
         <div className="flex gap-2 items-center">
@@ -135,15 +133,11 @@ function Input() {
           </button>
         </div>
       </Heading>
-      <input
-        type="text"
-        className="text-neutral-100"
-        value={
-          data.mode === "odometer" ? data.odometerMileage : data.tripMileage
-        }
-        placeholder={Mileage.format(0)}
-        onChange={(e) => dispatch({ type: "mileage", value: e.target.value })}
-        onBlur={() => dispatch({ type: "blur" })}
+      <NumericInput
+        value={data.mode === "odometer" ? data.odometerMileage : data.tripMileage}
+        setValue={(value) => dispatch({ type: "mileage", value: value })}
+        unit={Mileage}
+        placeholder={0.0}
       />
       <input
         type="submit"
