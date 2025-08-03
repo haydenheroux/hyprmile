@@ -1,4 +1,4 @@
-import type { NumericUnit } from "../../utils/numeric";
+import { parseNumber, type NumericUnit } from "../../utils/numeric";
 
 function NumericInput({
   value,
@@ -15,9 +15,10 @@ function NumericInput({
     <input
       type="text"
       value={value}
-      placeholder={unit.format(placeholder)}
+      placeholder={unit.formatText(placeholder)}
       onChange={(e) => setValue(e.target.value)}
-      onBlur={() => setValue(unit.format(value))}
+      onFocus={() => setValue(unit.format(parseNumber(value)))}
+      onBlur={() => setValue(unit.formatText(value))}
     />
   );
 }

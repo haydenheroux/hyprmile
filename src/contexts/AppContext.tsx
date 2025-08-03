@@ -5,22 +5,27 @@ import { DifferenceBuffer } from "../types/DifferenceBuffer";
 export interface AppContextType {
   page: Page;
   setPage: (page: Page) => void;
-  previousOdometerMileage: DifferenceBuffer;
-  setPreviousOdometerMileage: (previousOdometerMiles: DifferenceBuffer) => void;
+  previousOdometerMiles: DifferenceBuffer;
+  setPreviousOdometerMiles: (previousOdometerMiles: DifferenceBuffer) => void;
+  mpgEstimate: number;
+  setMPGEstimate: (mpgEstimate: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [view, setView] = useState<Page>(Page.Input);
+  const [page, setPage] = useState<Page>(Page.Input);
   const [previousOdometerMiles, setPreviousOdometerMiles] =
     useState<DifferenceBuffer>(new DifferenceBuffer(200_637));
+  const [mpgEstimate, setMPGEstimate] = useState<number>(20.37);
 
   const ctx: AppContextType = {
-    page: view,
-    setPage: setView,
-    previousOdometerMileage: previousOdometerMiles,
-    setPreviousOdometerMileage: setPreviousOdometerMiles,
+    page,
+    setPage,
+    previousOdometerMiles,
+    setPreviousOdometerMiles,
+    mpgEstimate,
+    setMPGEstimate
   };
 
   return <AppContext.Provider value={ctx}>{children}</AppContext.Provider>;

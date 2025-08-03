@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import {
   Gallons,
-  Mileage,
+  Miles,
   MilesPerGallon,
   parseNumber
 } from "../../utils/numeric";
@@ -58,37 +58,37 @@ function Input() {
   function calculateTripMiles(data: FormData): number | null {
     switch (data.mode) {
       case "odometer": {
-        if (data.odometerMileage === "") {
-          error("Odometer mileage field is empty");
+        if (data.odometerMiles === "") {
+          error("Odometer miles field is empty");
           return null;
         }
-        const odometerMileage = parseNumber(data.odometerMileage);
-        if (isNaN(odometerMileage)) {
-          error("Odometer mileage field is not a number");
+        const odometerMiles = parseNumber(data.odometerMiles);
+        if (isNaN(odometerMiles)) {
+          error("Odometer miles field is not a number");
           return null;
         }
 
-        const previousOdometerMileage =
-          app.previousOdometerMileage.fill(odometerMileage);
+        const previousOdometerMiles =
+          app.previousOdometerMiles.fill(odometerMiles);
 
-        const difference = previousOdometerMileage.difference();
+        const difference = previousOdometerMiles.difference();
         if (difference < 0) {
-          error("Odometer mileage has decreased");
+          error("Odometer miles have decreased");
           return null;
         }
 
-        // NOTE Only update the app context's odometer mileage when there are no mileage errors
-        app.setPreviousOdometerMileage(previousOdometerMileage);
+        // NOTE Only update the app context's odometer miles when there are no errors
+        app.setPreviousOdometerMiles(previousOdometerMiles);
         return difference;
       }
       case "trip": {
-        if (data.tripMileage === "") {
-          error("Trip mileage is empty");
+        if (data.tripMiles === "") {
+          error("Trip miles field is empty");
           return null;
         }
-        const tripMiles = parseNumber(data.tripMileage);
+        const tripMiles = parseNumber(data.tripMiles);
         if (isNaN(tripMiles)) {
-          error("Trip mileage is not a number");
+          error("Trip miles field is not a number");
           return null;
         }
         return tripMiles;
@@ -117,7 +117,7 @@ function Input() {
           <span
             className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
           >
-            {Mileage.format(app.previousOdometerMileage.prev)} mi.
+            {Miles.format(app.previousOdometerMiles.prev)} mi.
           </span>
           <button
             className={`${data.mode === "odometer" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
@@ -134,9 +134,9 @@ function Input() {
         </div>
       </Heading>
       <NumericInput
-        value={data.mode === "odometer" ? data.odometerMileage : data.tripMileage}
-        setValue={(value) => dispatch({ type: "mileage", value: value })}
-        unit={Mileage}
+        value={data.mode === "odometer" ? data.odometerMiles : data.tripMiles}
+        setValue={(value) => dispatch({ type: "miles", value: value })}
+        unit={Miles}
         placeholder={0.0}
       />
       <input

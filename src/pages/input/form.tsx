@@ -6,8 +6,8 @@ export type FormState =
 export type FormData = {
   date: Date;
   mode: "odometer" | "trip";
-  odometerMileage: string;
-  tripMileage: string;
+  odometerMiles: string;
+  tripMiles: string;
   gallons: string;
 };
 
@@ -15,8 +15,8 @@ export function defaultFormData(): FormData {
   return {
     date: new Date(),
     mode: "odometer",
-    odometerMileage: "",
-    tripMileage: "",
+    odometerMiles: "",
+    tripMiles: "",
     gallons: "",
   }
 }
@@ -26,7 +26,7 @@ type FormAction =
   | { type: "gallons"; value: string }
   | { type: "odometer" }
   | { type: "trip" }
-  | { type: "mileage"; value: string };
+  | { type: "miles"; value: string };
 
 export function formReducer(data: FormData, action: FormAction): FormData {
   switch (action.type) {
@@ -41,11 +41,11 @@ export function formReducer(data: FormData, action: FormAction): FormData {
       return { ...data, mode: "odometer" };
     case "trip":
       return { ...data, mode: "trip" };
-    case "mileage": {
+    case "miles": {
       if (data.mode === "odometer") {
-        return { ...data, odometerMileage: action.value };
+        return { ...data, odometerMiles: action.value };
       } else {
-        return { ...data, tripMileage: action.value };
+        return { ...data, tripMiles: action.value };
       }
     }
     default:

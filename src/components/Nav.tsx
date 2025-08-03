@@ -7,14 +7,14 @@ import { useAppContext } from "../contexts/AppContext";
 export function Nav() {
   const app = useAppContext();
 
-  function createNavIcon(view: View, text: string, Icon: IconType) {
+  function createNavIcon(page: Page, text: string, Icon: IconType) {
     return (
       <NavIcon
         Icon={Icon}
         text={text}
         key={text}
-        onClick={() => app.setPage(view)}
-        active={app.page === view}
+        onClick={() => app.setPage(page)}
+        active={app.page === page}
       />
     );
   }
@@ -30,8 +30,8 @@ export function Nav() {
   };
 
   return (
-    <nav className="w-screen my-6 px-2 flex flex-row lg:gap-8 gap-2 justify-center">
-      {Object.keys(icons).map((view) => icons[view as View])}
+    <nav className="w-screen my-6 px-2 flex-horizontal justify-center">
+      {Object.keys(icons).map((page) => icons[page as Page])}
     </nav>
   );
 }

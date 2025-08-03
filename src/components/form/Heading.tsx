@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 
-function Heading({ value, children }: { value: string; children?: ReactNode; }) {
+function Heading({ value, children }: { value: string; children?: ReactNode }) {
   return (
     <div className="flex justify-between items-center h-8">
-      <span className="text-neutral-100 text-xl">{value}</span>
+      <span className="text-neutral-100 text-xl font-bold">{value}</span>
       {children}
     </div>
-  )
+  );
 }
 
 export default Heading;
