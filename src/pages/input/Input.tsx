@@ -3,17 +3,18 @@ import {
   Gallons,
   Miles,
   MilesPerGallon,
-  parseNumber
+  parseNumber,
 } from "../../utils/numeric";
 import {
   formReducer,
   type FormState,
   type FormData,
-  defaultFormData
+  defaultFormData,
 } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput.tsx";
+import Group from "../../components/form/Group.tsx";
 
 function formatYYYYMMDD(date: Date): string {
   return date.toISOString().split("T")[0];
@@ -98,47 +99,54 @@ function Input() {
     }
   }
 
-  return <>
-      <Heading value={"Date"} />
-      <input
-        type="date"
-        value={formatYYYYMMDD(data.date)}
-        onChange={(e) => dispatch({ type: "date", value: e.target.value })}
-      />
-      <Heading value={"Gallons"} />
-      <NumericInput
-        value={data.gallons}
-        setValue={(value) => dispatch({ type: "gallons", value: value })}
-        unit={Gallons}
-        placeholder={0.0}
-      />
-      <Heading value={"Miles"}>
-        <div className="flex gap-2 items-center">
-          <span
-            className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
-          >
-            {Miles.format(app.previousOdometerMiles.prev)} mi.
-          </span>
-          <button
-            className={`${data.mode === "odometer" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
-            onClick={() => dispatch({ type: "odometer" })}
-          >
-            Odo.
-          </button>
-          <button
-            className={`${data.mode === "trip" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
-            onClick={() => dispatch({ type: "trip" })}
-          >
-            Trip
-          </button>
-        </div>
-      </Heading>
-      <NumericInput
-        value={data.mode === "odometer" ? data.odometerMiles : data.tripMiles}
-        setValue={(value) => dispatch({ type: "miles", value: value })}
-        unit={Miles}
-        placeholder={0.0}
-      />
+  return (
+    <>
+      <Group>
+        <Heading value={"Date"} />
+        <input
+          type="date"
+          value={formatYYYYMMDD(data.date)}
+          onChange={(e) => dispatch({ type: "date", value: e.target.value })}
+        />
+      </Group>
+      <Group>
+        <Heading value={"Gallons"} />
+        <NumericInput
+          value={data.gallons}
+          setValue={(value) => dispatch({ type: "gallons", value: value })}
+          unit={Gallons}
+          placeholder={0.0}
+        />
+      </Group>
+      <Group>
+        <Heading value={"Miles"}>
+          <div className="flex gap-2 items-center">
+            <span
+              className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
+            >
+              {Miles.format(app.previousOdometerMiles.prev)} mi.
+            </span>
+            <button
+              className={`${data.mode === "odometer" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
+              onClick={() => dispatch({ type: "odometer" })}
+            >
+              Odo.
+            </button>
+            <button
+              className={`${data.mode === "trip" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
+              onClick={() => dispatch({ type: "trip" })}
+            >
+              Trip
+            </button>
+          </div>
+        </Heading>
+        <NumericInput
+          value={data.mode === "odometer" ? data.odometerMiles : data.tripMiles}
+          setValue={(value) => dispatch({ type: "miles", value: value })}
+          unit={Miles}
+          placeholder={0.0}
+        />
+      </Group>
       <input
         type="submit"
         className="button-active"
@@ -168,6 +176,7 @@ function Input() {
         </span>
       </div>
     </>
+  );
 }
 
 export default Input;

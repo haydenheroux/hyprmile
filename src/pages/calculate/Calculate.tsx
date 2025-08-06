@@ -10,8 +10,8 @@ import {
   parseNumber,
 } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
+import Group from "../../components/form/Group";
 
-// TODO Implement calculate component
 function Calculate() {
   const app = useAppContext();
   const [miles, setMiles] = useState<string>("");
@@ -19,34 +19,48 @@ function Calculate() {
 
   return (
     <>
-      <Heading value={"Total Miles"} />
-      <NumericInput
-        value={miles}
-        placeholder={0}
-        setValue={(value) => setMiles(value)}
-        unit={Miles}
-      />
-      <Heading value={"Estimated Miles per Gallon"} />
-      <Numeric value={app.mpgEstimate} placeholder={0} unit={MilesPerGallon} />
-      <Heading value={"Estimated Gallons"} />
-      <Numeric
-        value={parseNumber(miles) / app.mpgEstimate}
-        placeholder={0}
-        unit={Gallons}
-      />
-      <Heading value={"Price per Gallon"} />
-      <NumericInput
-        value={price}
-        placeholder={0}
-        setValue={(value) => setPrice(value)}
-        unit={Dollars}
-      />
-      <Heading value={"Total Price"} />
-      <Numeric
-        value={(parseNumber(miles) / app.mpgEstimate) * parseNumber(price)}
-        placeholder={0}
-        unit={Dollars}
-      />
+      <Group>
+        <Heading value={"Total Miles"} />
+        <NumericInput
+          value={miles}
+          placeholder={0}
+          setValue={(value) => setMiles(value)}
+          unit={Miles}
+        />
+      </Group>
+      <Group>
+        <Heading value={"Estimated Miles per Gallon"} />
+        <Numeric
+          value={app.mpgEstimate}
+          placeholder={0}
+          unit={MilesPerGallon}
+        />
+      </Group>
+      <Group>
+        <Heading value={"Estimated Gallons"} />
+        <Numeric
+          value={parseNumber(miles) / app.mpgEstimate}
+          placeholder={0}
+          unit={Gallons}
+        />
+      </Group>
+      <Group>
+        <Heading value={"Price per Gallon"} />
+        <NumericInput
+          value={price}
+          placeholder={0}
+          setValue={(value) => setPrice(value)}
+          unit={Dollars}
+        />
+      </Group>
+      <Group>
+        <Heading value={"Total Price"} />
+        <Numeric
+          value={(parseNumber(miles) / app.mpgEstimate) * parseNumber(price)}
+          placeholder={0}
+          unit={Dollars}
+        />
+      </Group>
     </>
   );
 }
