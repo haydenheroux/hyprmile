@@ -168,11 +168,7 @@ function Input() {
         onClick={() => setState({ state: "input" })}
       >
         <span className="text-xl font-bold text-neutral-100 ">
-          MPG Recorded
-        </span>
-        <br />
-        <span className="text-neutral-500">
-          {MilesPerGallon.format(mpg)} miles / gallon
+          {MilesPerGallon.formatText(mpg)} on {formatYYYYMMDD(data.date)}
         </span>
       </div>
     </>
