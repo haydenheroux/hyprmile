@@ -1,3 +1,5 @@
+import type { AppContextType } from "../../contexts/AppContext";
+import { Record } from "../../types/Record";
 import { parseNumber } from "../../utils/numeric";
 
 type FormState =
@@ -17,7 +19,7 @@ export type FormData = {
   gallons: string;
 };
 
-export function defaultFormData(previousOdometerMiles: number): FormData {
+export function initialFormData(previousOdometerMiles: number): FormData {
   return {
     state: { state: "input" },
     date: new Date(),
@@ -40,7 +42,11 @@ type FormAction =
   | { type: "miles"; value: string }
   | { type: "submit" };
 
-export function formReducer(data: FormData, action: FormAction): FormData {
+export function formReducer(
+  data: FormData,
+  action: FormAction,
+  app: AppContextType,
+): FormData {
   switch (action.type) {
     case "reset":
       return { ...data, state: { state: "input" } };
@@ -63,13 +69,13 @@ export function formReducer(data: FormData, action: FormAction): FormData {
       }
     }
     case "submit":
-      return handleSubmit(data);
+      return handleSubmit(data, app);
     default:
       return data;
   }
 }
 
-function handleSubmit(data: FormData): FormData {
+function handleSubmit(data: FormData, app: AppContextType): FormData {
   if (data.gallons === "") {
     return {
       ...data,
@@ -146,10 +152,11 @@ function handleSubmit(data: FormData): FormData {
     };
   }
 
-  // app.setRecords([
-  //   ...app.records,
-  //   new Record(data.date, gallons, newData.estimatedTripMiles),
-  // ]);
+  app.setRecords([
+    ...app.records,
+    new Record(data.date, gallons, estimatedTripMiles),
+  ]);
+
   return {
     ...data,
     state: { state: "complete" },

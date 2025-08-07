@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
-import { formReducer, defaultFormData } from "./form.tsx";
+import { formReducer, initialFormData } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput.tsx";
@@ -10,9 +10,11 @@ import { formatYYYYMMDD } from "../../utils/date.ts";
 function Input() {
   const app = useAppContext();
 
+  // TODO useReducer is unable to infer the that the type of action is FormAction, and explicitly
+  // specifying the type with <FormData, FormAction> creates other type errors
   const [data, dispatch] = useReducer(
-    formReducer,
-    defaultFormData(app.previousOdometerMiles),
+    (data, action) => formReducer(data, action, app),
+    initialFormData(app.previousOdometerMiles),
   );
 
   return (
