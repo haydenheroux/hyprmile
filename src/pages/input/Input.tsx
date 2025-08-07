@@ -1,105 +1,19 @@
-import { useReducer, useState } from "react";
-import {
-  Gallons,
-  Miles,
-  MilesPerGallon,
-  parseNumber,
-} from "../../utils/numeric";
-import {
-  formReducer,
-  type FormState,
-  type FormData,
-  defaultFormData,
-} from "./form.tsx";
+import { useReducer } from "react";
+import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
+import { formReducer, defaultFormData } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput.tsx";
 import Group from "../../components/form/Group.tsx";
 import { formatYYYYMMDD } from "../../utils/date.ts";
-import { Record } from "../../types/Record.ts";
 
 function Input() {
   const app = useAppContext();
 
-  const [data, dispatch] = useReducer(formReducer, defaultFormData());
-
-  const [mpg, setMPG] = useState<number>(0);
-  const [state, setState] = useState<FormState>({ state: "input" });
-
-  const error = (reason: string): void => {
-    setState({ state: "error", reason });
-  };
-
-  function handleSubmit(data: FormData) {
-    if (data.gallons === "") {
-      error("Gallons field is empty");
-      return;
-    }
-    const gallons = parseNumber(data.gallons);
-    if (isNaN(gallons)) {
-      error("Gallons is not a number");
-      return;
-    }
-
-    const tripMiles = calculateTripMiles(data);
-    if (tripMiles === null) {
-      // NOTE It is `calculateTripMiles` responsibility to call `error`
-      return;
-    }
-
-    const mpg = tripMiles / gallons;
-    if (!isNaN(mpg)) {
-      setMPG(mpg);
-      setState({ state: "complete" });
-      app.setRecords([
-        ...app.records,
-        new Record(data.date, gallons, tripMiles)
-      ]);
-    }
-  }
-
-  function calculateTripMiles(data: FormData): number | null {
-    switch (data.mode) {
-      case "odometer": {
-        if (data.odometerMiles === "") {
-          error("Odometer miles field is empty");
-          return null;
-        }
-        const odometerMiles = parseNumber(data.odometerMiles);
-        if (isNaN(odometerMiles)) {
-          error("Odometer miles field is not a number");
-          return null;
-        }
-
-        const previousOdometerMiles =
-          app.previousOdometerMiles.fill(odometerMiles);
-
-        const difference = previousOdometerMiles.difference();
-        if (difference < 0) {
-          error("Odometer miles have decreased");
-          return null;
-        }
-
-        // NOTE Only update the app context's odometer miles when there are no errors
-        app.setPreviousOdometerMiles(previousOdometerMiles);
-        return difference;
-      }
-      case "trip": {
-        if (data.tripMiles === "") {
-          error("Trip miles field is empty");
-          return null;
-        }
-        const tripMiles = parseNumber(data.tripMiles);
-        if (isNaN(tripMiles)) {
-          error("Trip miles field is not a number");
-          return null;
-        }
-        return tripMiles;
-      }
-      default:
-        return 0.0;
-    }
-  }
+  const [data, dispatch] = useReducer(
+    formReducer,
+    defaultFormData(app.previousOdometerMiles),
+  );
 
   return (
     <>
@@ -126,7 +40,7 @@ function Input() {
             <span
               className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
             >
-              {Miles.format(app.previousOdometerMiles.prev)} mi.
+              {Miles.format(data.previousOdometerMiles)} mi.
             </span>
             <button
               className={`${data.mode === "odometer" ? "button-active" : "button"} text-md p-0.5 transition-bg ease-in-out duration-100`}
@@ -153,24 +67,25 @@ function Input() {
         type="submit"
         className="button-active p-0"
         value="Submit"
-        onClick={() => handleSubmit(data)}
+        onClick={() => dispatch({ type: "submit" })}
       />
       <button
-        className={`button-error p-2 transition-opacity ${state.state === "error" ? "opacity-100 block" : "opacity-0 hidden"} duration-75 ease-in-out`}
-        onClick={() => setState({ state: "input" })}
+        className={`button-error p-2 transition-opacity ${data.state.state === "error" ? "opacity-100 block" : "opacity-0 hidden"} duration-75 ease-in-out`}
+        onClick={() => dispatch({ type: "reset" })}
       >
         <span className="text-xl font-bold text-red-300 ">Input Error</span>
         <br />
         <span className="text-red-400">
-          {state.state === "error" ? state.reason : null}
+          {data.state.state === "error" ? data.state.error : ""}
         </span>
       </button>
       <div
-        className={`button p-2 transition-opacity ${state.state === "complete" ? "opacity-100" : "opacity-0"} duration-75 ease-in-out`}
-        onClick={() => setState({ state: "input" })}
+        className={`button p-2 transition-opacity ${data.state.state === "complete" ? "opacity-100" : "opacity-0"} duration-75 ease-in-out`}
+        onClick={() => dispatch({ type: "reset" })}
       >
         <span className="text-xl font-bold text-neutral-100 ">
-          {MilesPerGallon.formatText(mpg)} on {formatYYYYMMDD(data.date)}
+          {MilesPerGallon.formatText(data.estimatedMPG)} on{" "}
+          {formatYYYYMMDD(data.date)}
         </span>
       </div>
     </>
