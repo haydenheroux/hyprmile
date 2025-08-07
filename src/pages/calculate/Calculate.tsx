@@ -11,11 +11,16 @@ import {
 } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
 import Group from "../../components/form/Group";
+import { Record } from "../../types/Record";
 
 function Calculate() {
   const app = useAppContext();
   const [miles, setMiles] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+
+  const overallRecord = Record.createOverallRecord(app.records);
+  const estimatedGallons = parseNumber(miles) / overallRecord.mpg;
+  const pricePerGallon = parseNumber(price);
 
   return (
     <>
@@ -31,7 +36,7 @@ function Calculate() {
       <Group>
         <Heading value={"Estimated Miles per Gallon"} />
         <Numeric
-          value={app.mpgEstimate}
+          value={overallRecord.mpg}
           placeholder={0}
           unit={MilesPerGallon}
         />
@@ -39,7 +44,7 @@ function Calculate() {
       <Group>
         <Heading value={"Estimated Gallons"} />
         <Numeric
-          value={parseNumber(miles) / app.mpgEstimate}
+          value={estimatedGallons}
           placeholder={0}
           unit={Gallons}
         />
@@ -56,7 +61,7 @@ function Calculate() {
       <Group>
         <Heading value={"Total Price"} />
         <Numeric
-          value={(parseNumber(miles) / app.mpgEstimate) * parseNumber(price)}
+          value={estimatedGallons * pricePerGallon}
           placeholder={0}
           unit={Dollars}
         />

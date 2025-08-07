@@ -15,10 +15,8 @@ import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput.tsx";
 import Group from "../../components/form/Group.tsx";
-
-function formatYYYYMMDD(date: Date): string {
-  return date.toISOString().split("T")[0];
-}
+import { formatYYYYMMDD } from "../../utils/date.ts";
+import { Record } from "../../types/Record.ts";
 
 function Input() {
   const app = useAppContext();
@@ -53,6 +51,10 @@ function Input() {
     if (!isNaN(mpg)) {
       setMPG(mpg);
       setState({ state: "complete" });
+      app.setRecords([
+        ...app.records,
+        new Record(data.date, gallons, tripMiles)
+      ]);
     }
   }
 
