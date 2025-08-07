@@ -6,9 +6,8 @@
     font-family: "Martian Mono", monospace;
     font-optical-sizing: auto;
     font-style: normal;
-    font-variation-settings:
-      "wdth" 80;
-    @apply font-light;
+    font-variation-settings: "wdth" 80;
+    @apply font-normal;
   }
 
   hr {
@@ -16,21 +15,21 @@
   }
 
   input {
-    @apply text-neutral-100 font-light border-neutral-800 border-1 rounded-lg h-10 text-lg p-2;
+    @apply text-neutral-100 font-normal border-neutral-800 border-3 focus:outline-none focus:border-blue-400 rounded-lg h-10 text-lg p-2;
   }
 }
 
 @layer components {
   .button {
-    @apply text-neutral-100 font-normal border-neutral-900 bg-linear-to-t from-neutral-950 to-neutral-900 rounded-lg hover:shadow-lg shadow-neutral-900;
+    @apply text-neutral-100 font-normal border-neutral-900 border-3 focus:outline-none focus:border-blue-400 bg-linear-to-t from-neutral-950 to-neutral-900 rounded-md hover:shadow-xl/50 shadow-neutral-800;
   }
 
   .button-active {
-    @apply text-neutral-950 font-normal border-neutral-50 bg-linear-to-t from-neutral-200 to-neutral-100 rounded-sm hover:shadow-lg shadow-neutral-600;
+    @apply text-neutral-950 font-normal border-neutral-50 border-3 focus:outline-none focus:border-blue-400 bg-linear-to-t from-neutral-200 to-neutral-100 rounded-md hover:shadow-xl/50 shadow-neutral-600;
   }
 
   .button-error {
-    @apply text-red-100 font-normal border-red-900 bg-linear-to-t from-red-950 to-red-900 rounded-lg shadow-md shadow-red-900;
+    @apply text-red-100 font-normal border-red-900 border-3 focus:outline-none focus:border-blue-400 bg-linear-to-t from-red-950 to-red-900 rounded-md hover:shadow-xl/50 shadow-red-950;
   }
 }
 

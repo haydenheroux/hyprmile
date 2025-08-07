@@ -122,18 +122,18 @@ function Input() {
         <Heading value={"Miles"}>
           <div className="flex gap-2 items-center">
             <span
-              className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
+              className={`text-neutral-500 text-md ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
             >
               {Miles.format(app.previousOdometerMiles.prev)} mi.
             </span>
             <button
-              className={`${data.mode === "odometer" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
+              className={`${data.mode === "odometer" ? "button-active" : "button"} text-sm p-1 transition-bg ease-in-out duration-100`}
               onClick={() => dispatch({ type: "odometer" })}
             >
               Odo.
             </button>
             <button
-              className={`${data.mode === "trip" ? "button-active" : "button"} "text-sm p-1 transition-bg ease-in-out duration-100`}
+              className={`${data.mode === "trip" ? "button-active" : "button"} text-sm p-1 transition-bg ease-in-out duration-100`}
               onClick={() => dispatch({ type: "trip" })}
             >
               Trip
