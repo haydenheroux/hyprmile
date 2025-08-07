@@ -10,7 +10,7 @@ function Numeric({
   unit: NumericUnit;
 }) {
   return (
-    <span className="text-neutral-100 text-lg font-light">
+    <span className="text-neutral-100 font-light">
       {unit.formatText(value ? value : placeholder)}
     </span>
   );

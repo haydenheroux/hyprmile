@@ -15,7 +15,7 @@
   }
 
   input {
-    @apply text-neutral-100 font-light border-neutral-800 border-2 focus:outline-none focus:border-blue-400 rounded-lg h-10 text-lg p-2;
+    @apply text-neutral-100 font-light border-neutral-800 border-2 focus:outline-none focus:border-blue-400 rounded-lg h-10 p-2;
   }
 }
 
