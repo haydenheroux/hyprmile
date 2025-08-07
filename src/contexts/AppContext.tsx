@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Page } from "../types/View";
 import type { Record } from "../types/Record";
+import { RecordsRepository } from "../utils/localStorage";
 
 export interface AppContextType {
   page: Page;
@@ -14,7 +15,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [page, setPage] = useState<Page>(Page.Input);
-  const [records, setRecords] = useState<Record[]>([]);
+  const [records, setRecords] = useState(RecordsRepository.getValue());
 
   const ctx: AppContextType = {
     page,

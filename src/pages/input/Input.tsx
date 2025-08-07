@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
 import { formReducer, initialFormData } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
@@ -6,6 +6,7 @@ import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput.tsx";
 import Group from "../../components/form/Group.tsx";
 import { formatYYYYMMDD } from "../../utils/date.ts";
+import { RecordsRepository } from "../../utils/localStorage.ts";
 
 function Input() {
   const app = useAppContext();
@@ -16,6 +17,8 @@ function Input() {
     (data, action) => formReducer(data, action, app),
     initialFormData(app.previousOdometerMiles),
   );
+
+  useEffect(() => RecordsRepository.setValue(app.records), [app.records]);
 
   return (
     <>
