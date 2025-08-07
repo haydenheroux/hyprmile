@@ -127,13 +127,13 @@ function Input() {
               {Miles.format(app.previousOdometerMiles.prev)} mi.
             </span>
             <button
-              className={`${data.mode === "odometer" ? "button-active" : "button"} text-sm p-1 transition-bg ease-in-out duration-100`}
+              className={`${data.mode === "odometer" ? "button-active" : "button"} text-md p-0.5 transition-bg ease-in-out duration-100`}
               onClick={() => dispatch({ type: "odometer" })}
             >
               Odo.
             </button>
             <button
-              className={`${data.mode === "trip" ? "button-active" : "button"} text-sm p-1 transition-bg ease-in-out duration-100`}
+              className={`${data.mode === "trip" ? "button-active" : "button"} text-md p-0.5 transition-bg ease-in-out duration-100`}
               onClick={() => dispatch({ type: "trip" })}
             >
               Trip
@@ -149,7 +149,7 @@ function Input() {
       </Group>
       <input
         type="submit"
-        className="button-active"
+        className="button-active p-0"
         value="Submit"
         onClick={() => handleSubmit(data)}
       />
