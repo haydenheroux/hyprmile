@@ -1,8 +1,15 @@
 import type { IconType } from "react-icons";
 import { NavIcon } from "./NavIcon";
-import { PiCalculator, PiChartLineUp, PiGasPump } from "react-icons/pi";
-import { Page } from "../types/View";
+import {
+  PiCalculator,
+  PiChartLineUp,
+  PiArchive,
+  PiGasPump,
+  PiGear,
+} from "react-icons/pi";
+import { Page } from "../types/Page";
 import { useAppContext } from "../contexts/AppContext";
+import Inline from "./form/Inline";
 
 export function Nav() {
   const app = useAppContext();
@@ -27,11 +34,13 @@ export function Nav() {
       PiChartLineUp,
     ),
     [Page.Calculate]: createNavIcon(Page.Calculate, "Calculate", PiCalculator),
+    [Page.Records]: createNavIcon(Page.Records, "Records", PiArchive),
+    [Page.Settings]: createNavIcon(Page.Settings, "Settings", PiGear),
   };
 
   return (
-    <nav className="w-screen my-6 px-2 flex-horizontal justify-center">
-      {Object.keys(icons).map((page) => icons[page as Page])}
+    <nav className="w-screen my-6 px-2 justify-center">
+      <Inline>{Object.keys(icons).map((page) => icons[page as Page])}</Inline>
     </nav>
   );
 }

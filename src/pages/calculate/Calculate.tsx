@@ -10,14 +10,15 @@ import {
   parseNumber,
 } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
-import Group from "../../components/form/Group";
+import Block from "../../components/form/Block";
 import { Record } from "../../types/Record";
 
 function Calculate() {
   const app = useAppContext();
 
   const overallRecord = Record.createOverallRecord(app.records);
-  const initialMPG = app.records.length > 0 ? MilesPerGallon.formatText(overallRecord.mpg) : "";
+  const initialMPG =
+    app.records.length > 0 ? MilesPerGallon.formatText(overallRecord.mpg) : "";
 
   const [miles, setMiles] = useState<string>("");
   const [mpg, setMPG] = useState<string>(initialMPG);
@@ -28,7 +29,7 @@ function Calculate() {
 
   return (
     <>
-      <Group>
+      <Block>
         <Heading value={"Total Miles"} />
         <NumericInput
           value={miles}
@@ -36,8 +37,8 @@ function Calculate() {
           setValue={(value) => setMiles(value)}
           unit={Miles}
         />
-      </Group>
-      <Group>
+      </Block>
+      <Block>
         <Heading value={"Estimated Miles per Gallon"} />
         <NumericInput
           value={mpg}
@@ -45,16 +46,12 @@ function Calculate() {
           setValue={(value) => setMPG(value)}
           unit={MilesPerGallon}
         />
-      </Group>
-      <Group>
+      </Block>
+      <Block>
         <Heading value={"Estimated Gallons"} />
-        <Numeric
-          value={estimatedGallons}
-          placeholder={0}
-          unit={Gallons}
-        />
-      </Group>
-      <Group>
+        <Numeric value={estimatedGallons} placeholder={0} unit={Gallons} />
+      </Block>
+      <Block>
         <Heading value={"Price per Gallon"} />
         <NumericInput
           value={price}
@@ -62,15 +59,15 @@ function Calculate() {
           setValue={(value) => setPrice(value)}
           unit={Dollars}
         />
-      </Group>
-      <Group>
+      </Block>
+      <Block>
         <Heading value={"Total Price"} />
         <Numeric
           value={estimatedGallons * pricePerGallon}
           placeholder={0}
           unit={Dollars}
         />
-      </Group>
+      </Block>
     </>
   );
 }

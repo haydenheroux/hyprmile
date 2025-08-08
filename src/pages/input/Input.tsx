@@ -1,12 +1,12 @@
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
 import { formReducer, initialFormData } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput.tsx";
-import Group from "../../components/form/Group.tsx";
+import Block from "../../components/form/Block.tsx";
 import { formatYYYYMMDD } from "../../utils/date.ts";
-import { RecordsRepository } from "../../utils/localStorage.ts";
+import Inline from "../../components/form/Inline.tsx";
 
 function Input() {
   const app = useAppContext();
@@ -18,19 +18,17 @@ function Input() {
     initialFormData(app.previousOdometerMiles),
   );
 
-  useEffect(() => RecordsRepository.setValue(app.records), [app.records]);
-
   return (
     <>
-      <Group>
+      <Block>
         <Heading value={"Date"} />
         <input
           type="date"
           value={formatYYYYMMDD(data.date)}
           onChange={(e) => dispatch({ type: "date", value: e.target.value })}
         />
-      </Group>
-      <Group>
+      </Block>
+      <Block>
         <Heading value={"Gallons"} />
         <NumericInput
           value={data.gallons}
@@ -38,10 +36,10 @@ function Input() {
           unit={Gallons}
           placeholder={0.0}
         />
-      </Group>
-      <Group>
+      </Block>
+      <Block>
         <Heading value={"Miles"}>
-          <div className="flex gap-2 items-center">
+          <Inline>
             <span
               className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
             >
@@ -59,7 +57,7 @@ function Input() {
             >
               Trip
             </button>
-          </div>
+          </Inline>
         </Heading>
         <NumericInput
           value={data.mode === "odometer" ? data.odometerMiles : data.tripMiles}
@@ -67,10 +65,10 @@ function Input() {
           unit={Miles}
           placeholder={0.0}
         />
-      </Group>
+      </Block>
       <input
         type="submit"
-        className="button-active p-0"
+        className="button-active p-2"
         value="Submit"
         onClick={() => dispatch({ type: "submit" })}
       />
