@@ -25,12 +25,12 @@ export function NavIcon({
       className={`${active ? "button-active min-w-56" : "button min-w-14 lg:min-w-36"} h-14 border-2 rounded-lg flex justify-center items-center gap-2 transition-[min-width] ease-in-out duration-150`}
     >
       <span
-        className={`${active ? "text-neutral-950" : "text-neutral-100"} transition-[scale] ease-in-out duration-150`}
+        className={`transition-[scale] ease-in-out duration-150`}
       >
         <Icon size={32} />
       </span>
       <span
-        className={`${active ? "text-neutral-950 scale-x-100 relative" : "scale-x-0 absolute"} origin-left overflow-hidden transition-transform ease-in-out duration-0 text-lg uppercase`}
+        className={`${active ? "scale-x-100 relative" : "scale-x-0 absolute"} origin-left overflow-hidden transition-transform ease-in-out duration-0 text-lg uppercase`}
       >
         {text}
       </span>
