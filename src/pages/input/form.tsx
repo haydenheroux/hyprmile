@@ -1,5 +1,5 @@
 import { parseNumber } from "../../utils/numeric";
-import { Record } from "../../types/Record";
+import { createDatedRecord, type Record } from "../../types/Record";
 
 type FormInput = {
   date: Date;
@@ -118,6 +118,6 @@ function handleSubmit(data: FormData): FormData {
   return {
     ...data,
     state: "complete",
-    record: new Record(data.date, gallons, miles),
+    record: createDatedRecord(data.date, gallons, miles),
   };
 }

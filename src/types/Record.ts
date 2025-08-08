@@ -1,25 +1,30 @@
-export class Record {
-  public readonly date: Date;
-  public readonly gallons: number;
-  public readonly miles: number;
-  public readonly mpg: number;
+export type Record = {
+  date?: Date;
+  gallons: number;
+  miles: number;
+  mpg: number;
+};
 
-  constructor(date: Date, gallons: number, miles: number) {
-    this.date = date;
-    this.gallons = gallons;
-    this.miles = miles;
-    this.mpg = miles === 0 ? 0 : miles / gallons;
-  }
-
-  static createOverallRecord(records: Record[]): Record {
-    let totalGallons = 0;
-    let totalMiles = 0;
-    for (const record of records) {
-      totalGallons += record.gallons;
-      totalMiles += record.miles;
-    }
-
-    return new Record(new Date(), totalGallons, totalMiles);
-  }
+export function createRecord(gallons: number, miles: number): Record {
+  return {
+    gallons: gallons,
+    miles: miles,
+    mpg: miles === 0 ? 0 : miles / gallons,
+  };
 }
 
+export function createDatedRecord(date: Date, gallons: number, miles: number) {
+  const record = createRecord(gallons, miles);
+  record.date = date;
+  return record;
+}
+
+export function createSummaryRecord(records: Record[]): Record {
+  let totalGallons = 0;
+  let totalMiles = 0;
+  for (const record of records) {
+    totalGallons += record.gallons;
+    totalMiles += record.miles;
+  }
+  return createRecord(totalGallons, totalMiles);
+}

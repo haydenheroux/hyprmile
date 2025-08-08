@@ -2,7 +2,7 @@ import Block from "../../components/form/Block";
 import Heading from "../../components/form/Heading";
 import RecordComponent from "../../components/RecordComponent";
 import { useAppContext } from "../../contexts/AppContext";
-import { Record } from "../../types/Record";
+import { createSummaryRecord } from "../../types/Record";
 
 function Statistics() {
   const app = useAppContext();
@@ -10,10 +10,7 @@ function Statistics() {
   return (
     <Block>
       <Heading value="Summary Statistics" />
-      <RecordComponent
-        record={Record.createOverallRecord(app.records)}
-        showDate={false}
-      />
+      <RecordComponent record={createSummaryRecord(app.records)} />
     </Block>
   );
 }
