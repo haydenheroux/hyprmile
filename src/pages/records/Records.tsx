@@ -7,12 +7,10 @@ function Records() {
 
   return (
     <>
-      {app.records.map((record, index) => (
-        <div key={index}>
-          <Block>
-            <RecordComponent record={record} />
-          </Block>
-        </div>
+      {app.records.slice().reverse().map((record, index) => (
+        <Block key={index}>
+          <RecordComponent record={record} />
+        </Block>
       ))}
     </>
   );
