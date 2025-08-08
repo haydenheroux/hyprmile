@@ -12,8 +12,8 @@ import Statistics from "./pages/statistics/Statistics";
 function App() {
   return (
     <AppProvider>
-      <Nav />
       <PageContainer>
+        <Nav />
         <WhichPage />
       </PageContainer>
     </AppProvider>

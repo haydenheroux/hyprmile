@@ -77,13 +77,13 @@ function Input() {
       </Block>
       <input
         type="submit"
-        className="button-active p-2"
+        className="button-active"
         value="Submit"
         onClick={() => dispatch({ type: "submit" })}
       />
       {data.state === "error" ? (
         <button
-          className="button-error p-2"
+          className="button-error"
           onClick={() => dispatch({ type: "reset" })}
         >
           <span className="text-xl font-bold text-red-300 ">Input Error</span>
@@ -92,7 +92,7 @@ function Input() {
         </button>
       ) : null}
       {data.state === "complete" ? (
-        <div className="button p-2" onClick={() => dispatch({ type: "reset" })}>
+        <div className="button" onClick={() => dispatch({ type: "reset" })}>
           <span className="text-xl font-bold text-neutral-100 ">
             {MilesPerGallon.formatText(data.record.mpg)} on{" "}
             {formatYYYYMMDD(data.date)}
