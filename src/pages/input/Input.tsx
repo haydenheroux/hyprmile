@@ -41,18 +41,18 @@ function Input() {
         <Heading value={"Miles"}>
           <Inline>
             <span
-              className={`text-neutral-500 ${data.mode === "odometer" ? "opacity-100" : "opacity-0"} transition-opacity duration-75 ease-in-out`}
+              className={`text-neutral-500 ${data.mode === "odometer" ? "block" : "hidden"}`}
             >
               {Miles.format(data.previousOdometerMiles)} mi.
             </span>
             <button
-              className={`${data.mode === "odometer" ? "button-active" : "button"} text-md p-0.5 transition-bg ease-in-out duration-100`}
+              className={`${data.mode === "odometer" ? "button-active" : "button"} text-md p-0.5`}
               onClick={() => dispatch({ type: "odometer" })}
             >
               Odo.
             </button>
             <button
-              className={`${data.mode === "trip" ? "button-active" : "button"} text-md p-0.5 transition-bg ease-in-out duration-100`}
+              className={`${data.mode === "trip" ? "button-active" : "button"} text-md p-0.5`}
               onClick={() => dispatch({ type: "trip" })}
             >
               Trip
@@ -73,7 +73,7 @@ function Input() {
         onClick={() => dispatch({ type: "submit" })}
       />
       <button
-        className={`button-error p-2 transition-opacity ${data.state.state === "error" ? "opacity-100 block" : "opacity-0 hidden"} duration-75 ease-in-out`}
+        className={`button-error p-2 ${data.state.state === "error" ? "block" : "hidden"}`}
         onClick={() => dispatch({ type: "reset" })}
       >
         <span className="text-xl font-bold text-red-300 ">Input Error</span>
@@ -83,7 +83,7 @@ function Input() {
         </span>
       </button>
       <div
-        className={`button p-2 transition-opacity ${data.state.state === "complete" ? "opacity-100" : "opacity-0"} duration-75 ease-in-out`}
+        className={`button p-2 ${data.state.state === "complete" ? "block" : "hidden"}`}
         onClick={() => dispatch({ type: "reset" })}
       >
         <span className="text-xl font-bold text-neutral-100 ">
