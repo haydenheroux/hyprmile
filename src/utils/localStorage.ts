@@ -1,4 +1,4 @@
-import { createDatedRecord, type Record } from "../types/Record";
+import { type Record } from "../types/Record";
 
 class LocalStorage<T> {
   private readonly key: string;
@@ -32,12 +32,18 @@ export const RecordsRepository = new LocalStorage(
 
     const records = [];
     for (const parsedRecord of parsedRecords) {
-      const { date, gallons, miles } = parsedRecord as {
+      const { date, gallons, miles, odometerMiles } = parsedRecord as {
         date: string;
         gallons: number;
         miles: number;
+        odometerMiles?: number;
       };
-      records.push(createDatedRecord(new Date(date), gallons, miles));
+      records.push({
+        date: new Date(date),
+        gallons,
+        miles,
+        odometerMiles,
+      } as Record);
     }
     return records;
   },

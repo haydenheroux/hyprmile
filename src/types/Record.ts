@@ -2,6 +2,7 @@ export type Record = {
   date?: Date;
   gallons: number;
   miles: number;
+  odometerMiles?: number;
   mpg: number;
 };
 
@@ -9,14 +10,8 @@ export function createRecord(gallons: number, miles: number): Record {
   return {
     gallons: gallons,
     miles: miles,
-    mpg: miles === 0 ? 0 : miles / gallons,
+    mpg: gallons === 0 ? 0 : miles / gallons,
   };
-}
-
-export function createDatedRecord(date: Date, gallons: number, miles: number) {
-  const record = createRecord(gallons, miles);
-  record.date = date;
-  return record;
 }
 
 export function createSummaryRecord(records: Record[]): Record {
@@ -27,4 +22,25 @@ export function createSummaryRecord(records: Record[]): Record {
     totalMiles += record.miles;
   }
   return createRecord(totalGallons, totalMiles);
+}
+
+export function recentOdometerMiles(
+  records: Record[]
+): number | null {
+  let odometerMiles = null;
+  for (const record of records) {
+    if (record.odometerMiles) {
+      odometerMiles = record.odometerMiles;
+    }
+  }
+  return odometerMiles;
+}
+
+export function hasOdometerMiles(records: Record[]): boolean {
+  for (const record of records) {
+    if (record.odometerMiles) {
+      return true;
+    }
+  }
+  return false;
 }

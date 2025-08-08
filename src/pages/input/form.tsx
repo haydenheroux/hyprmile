@@ -1,35 +1,34 @@
 import { parseNumber } from "../../utils/numeric";
-import { createDatedRecord, type Record } from "../../types/Record";
+import { createRecord, type Record } from "../../types/Record";
 
-type FormInput = {
+type FormFields = {
   date: Date;
-  mode: "odometer" | "trip";
-  previousOdometerMiles: number;
   miles: string;
   gallons: string;
 };
+
+type FormInput =
+  | (FormFields & { mode: "odometer"; previousOdometer: number })
+  | (FormFields & { mode: "trip" });
 
 export type FormData =
   | (FormInput & { state: "input" })
   | (FormInput & { state: "error"; error: string })
   | (FormInput & { state: "complete"; record: Record });
 
-export function initialFormData(previousOdometerMiles: number): FormData {
-  return {
-    state: "input",
-    date: new Date(),
-    mode: "trip",
-    previousOdometerMiles,
-    miles: "",
-    gallons: "",
-  };
-}
+export const initialFormData: FormData = {
+  state: "input",
+  date: new Date(),
+  mode: "trip",
+  miles: "",
+  gallons: "",
+};
 
 type FormAction =
   | { type: "reset" }
   | { type: "date"; value: string }
   | { type: "gallons"; value: string }
-  | { type: "odometer" }
+  | { type: "odometer"; previousOdometer: number }
   | { type: "trip" }
   | { type: "miles"; value: string }
   | { type: "submit" };
@@ -46,7 +45,11 @@ export function formReducer(data: FormData, action: FormAction): FormData {
     case "gallons":
       return { ...data, gallons: action.value };
     case "odometer":
-      return { ...data, mode: "odometer" };
+      return {
+        ...data,
+        mode: "odometer",
+        previousOdometer: action.previousOdometer,
+      };
     case "trip":
       return { ...data, mode: "trip" };
     case "miles": {
@@ -83,7 +86,7 @@ function handleSubmit(data: FormData): FormData {
       error: "Miles field is empty",
     };
   }
-  let miles = parseNumber(data.miles);
+  const miles = parseNumber(data.miles);
   if (isNaN(miles)) {
     return {
       ...data,
@@ -92,8 +95,11 @@ function handleSubmit(data: FormData): FormData {
     };
   }
 
+  let tripMiles = miles;
+  let previousOdometer = 0;
+
   if (data.mode === "odometer") {
-    const difference = miles - data.previousOdometerMiles;
+    const difference = miles - data.previousOdometer;
     if (difference < 0) {
       return {
         ...data,
@@ -102,11 +108,11 @@ function handleSubmit(data: FormData): FormData {
       };
     }
 
-    data.previousOdometerMiles = miles;
-    miles = difference;
+    previousOdometer = miles;
+    tripMiles = difference;
   }
 
-  const estimatedMPG = miles / gallons;
+  const estimatedMPG = tripMiles / gallons;
   if (isNaN(estimatedMPG)) {
     return {
       ...data,
@@ -115,9 +121,21 @@ function handleSubmit(data: FormData): FormData {
     };
   }
 
-  return {
+  const record = createRecord(gallons, tripMiles);
+  record.date = data.date;
+  if (data.mode === "odometer") {
+    record.odometerMiles = miles;
+  }
+
+  data = {
     ...data,
     state: "complete",
-    record: createDatedRecord(data.date, gallons, miles),
+    record,
   };
+
+  if (data.mode === "odometer") {
+    data.previousOdometer = previousOdometer;
+  }
+
+  return data;
 }
