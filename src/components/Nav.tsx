@@ -39,8 +39,11 @@ export function Nav() {
   };
 
   return (
-    <nav className="w-screen my-6 px-2 justify-center">
-      <Inline>{Object.keys(icons).map((page) => icons[page as Page])}</Inline>
-    </nav>
+    <>
+      <nav className="w-screen my-8 px-2">
+        <Inline>{Object.keys(icons).map((page) => icons[page as Page])}</Inline>
+      </nav>
+      <hr />
+    </>
   );
 }

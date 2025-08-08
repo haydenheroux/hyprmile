@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
 import { formReducer, initialFormData } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
@@ -14,9 +14,18 @@ function Input() {
   // TODO useReducer is unable to infer the that the type of action is FormAction, and explicitly
   // specifying the type with <FormData, FormAction> creates other type errors
   const [data, dispatch] = useReducer(
-    (data, action) => formReducer(data, action, app),
+    formReducer,
     initialFormData(app.previousOdometerMiles),
   );
+
+  const setRecords = useRef(app.setRecords);
+  const records = useRef(app.records);
+
+  useEffect(() => {
+    if (data.state === "complete") {
+      setRecords.current([...records.current, data.record]);
+    }
+  }, [data.state, data]);
 
   return (
     <>
@@ -72,25 +81,24 @@ function Input() {
         value="Submit"
         onClick={() => dispatch({ type: "submit" })}
       />
-      <button
-        className={`button-error p-2 ${data.state.state === "error" ? "block" : "hidden"}`}
-        onClick={() => dispatch({ type: "reset" })}
-      >
-        <span className="text-xl font-bold text-red-300 ">Input Error</span>
-        <br />
-        <span className="text-red-400">
-          {data.state.state === "error" ? data.state.error : ""}
-        </span>
-      </button>
-      <div
-        className={`button p-2 ${data.state.state === "complete" ? "block" : "hidden"}`}
-        onClick={() => dispatch({ type: "reset" })}
-      >
-        <span className="text-xl font-bold text-neutral-100 ">
-          {MilesPerGallon.formatText(data.estimatedMPG)} on{" "}
-          {formatYYYYMMDD(data.date)}
-        </span>
-      </div>
+      {data.state === "error" ? (
+        <button
+          className="button-error p-2"
+          onClick={() => dispatch({ type: "reset" })}
+        >
+          <span className="text-xl font-bold text-red-300 ">Input Error</span>
+          <br />
+          <span className="text-red-400">{data.error}</span>
+        </button>
+      ) : null}
+      {data.state === "complete" ? (
+        <div className="button p-2" onClick={() => dispatch({ type: "reset" })}>
+          <span className="text-xl font-bold text-neutral-100 ">
+            {MilesPerGallon.formatText(data.record.mpg)} on{" "}
+            {formatYYYYMMDD(data.date)}
+          </span>
+        </div>
+      ) : null}
     </>
   );
 }

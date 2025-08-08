@@ -1,31 +1,25 @@
-import type { AppContextType } from "../../contexts/AppContext";
-import { Record } from "../../types/Record";
 import { parseNumber } from "../../utils/numeric";
+import { Record } from "../../types/Record";
 
-type FormState =
-  | { state: "input" }
-  | { state: "error"; error: string }
-  | { state: "complete" };
-
-export type FormData = {
-  state: FormState;
+type FormInput = {
   date: Date;
   mode: "odometer" | "trip";
   previousOdometerMiles: number;
-  estimatedTripMiles: number;
-  estimatedMPG: number;
   miles: string;
   gallons: string;
 };
 
+export type FormData =
+  | (FormInput & { state: "input" })
+  | (FormInput & { state: "error"; error: string })
+  | (FormInput & { state: "complete"; record: Record });
+
 export function initialFormData(previousOdometerMiles: number): FormData {
   return {
-    state: { state: "input" },
+    state: "input",
     date: new Date(),
     mode: "trip",
     previousOdometerMiles,
-    estimatedTripMiles: 0,
-    estimatedMPG: 0,
     miles: "",
     gallons: "",
   };
@@ -40,14 +34,10 @@ type FormAction =
   | { type: "miles"; value: string }
   | { type: "submit" };
 
-export function formReducer(
-  data: FormData,
-  action: FormAction,
-  app: AppContextType,
-): FormData {
+export function formReducer(data: FormData, action: FormAction): FormData {
   switch (action.type) {
     case "reset":
-      return { ...data, state: { state: "input" } };
+      return { ...data, state: "input" };
     case "date": {
       const cleared = action.value === "";
       const date = cleared ? new Date() : new Date(action.value);
@@ -63,41 +53,42 @@ export function formReducer(
       return { ...data, miles: action.value };
     }
     case "submit":
-      return handleSubmit(data, app);
+      return handleSubmit(data);
     default:
       return data;
   }
 }
 
-function handleSubmit(data: FormData, app: AppContextType): FormData {
+function handleSubmit(data: FormData): FormData {
   if (data.gallons === "") {
     return {
       ...data,
-      state: { state: "error", error: "Gallons field is empty" },
+      state: "error",
+      error: "Gallons field is empty",
     };
   }
   const gallons = parseNumber(data.gallons);
   if (isNaN(gallons)) {
     return {
       ...data,
-      state: { state: "error", error: "Gallons is not a number" },
+      state: "error",
+      error: "Gallons is not a number",
     };
   }
 
   if (data.miles === "") {
     return {
       ...data,
-      state: { state: "error", error: "Miles field is empty" },
+      state: "error",
+      error: "Miles field is empty",
     };
   }
   let miles = parseNumber(data.miles);
   if (isNaN(miles)) {
     return {
       ...data,
-      state: {
-        state: "error",
-        error: "Miles field is not a number",
-      },
+      state: "error",
+      error: "Miles field is not a number",
     };
   }
 
@@ -106,7 +97,8 @@ function handleSubmit(data: FormData, app: AppContextType): FormData {
     if (difference < 0) {
       return {
         ...data,
-        state: { state: "error", error: "Odometer miles have decreased" },
+        state: "error",
+        error: "Odometer miles have decreased",
       };
     }
 
@@ -118,15 +110,14 @@ function handleSubmit(data: FormData, app: AppContextType): FormData {
   if (isNaN(estimatedMPG)) {
     return {
       ...data,
-      state: { state: "error", error: "Miles per gallon is not a number" },
+      state: "error",
+      error: "Miles per gallon is not a number",
     };
   }
 
-  app.setRecords([...app.records, new Record(data.date, gallons, miles)]);
-
   return {
     ...data,
-    state: { state: "complete" },
-    estimatedMPG,
+    state: "complete",
+    record: new Record(data.date, gallons, miles),
   };
 }
