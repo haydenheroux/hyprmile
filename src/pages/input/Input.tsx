@@ -60,7 +60,7 @@ function Input() {
           </Inline>
         </Heading>
         <NumericInput
-          value={data.mode === "odometer" ? data.odometerMiles : data.tripMiles}
+          value={data.miles}
           setValue={(value) => dispatch({ type: "miles", value: value })}
           unit={Miles}
           placeholder={0.0}

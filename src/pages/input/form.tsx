@@ -14,8 +14,7 @@ export type FormData = {
   previousOdometerMiles: number;
   estimatedTripMiles: number;
   estimatedMPG: number;
-  odometerMiles: string;
-  tripMiles: string;
+  miles: string;
   gallons: string;
 };
 
@@ -23,12 +22,11 @@ export function initialFormData(previousOdometerMiles: number): FormData {
   return {
     state: { state: "input" },
     date: new Date(),
-    mode: "odometer",
+    mode: "trip",
     previousOdometerMiles,
     estimatedTripMiles: 0,
     estimatedMPG: 0,
-    odometerMiles: "",
-    tripMiles: "",
+    miles: "",
     gallons: "",
   };
 }
@@ -62,11 +60,7 @@ export function formReducer(
     case "trip":
       return { ...data, mode: "trip" };
     case "miles": {
-      if (data.mode === "odometer") {
-        return { ...data, odometerMiles: action.value };
-      } else {
-        return { ...data, tripMiles: action.value };
-      }
+      return { ...data, miles: action.value };
     }
     case "submit":
       return handleSubmit(data, app);
@@ -90,61 +84,37 @@ function handleSubmit(data: FormData, app: AppContextType): FormData {
     };
   }
 
-  let previousOdometerMiles = data.previousOdometerMiles;
-  let estimatedTripMiles;
-
-  switch (data.mode) {
-    case "odometer": {
-      if (data.odometerMiles === "") {
-        return {
-          ...data,
-          state: { state: "error", error: "Odometer miles field is empty" },
-        };
-      }
-      const odometerMiles = parseNumber(data.odometerMiles);
-      if (isNaN(odometerMiles)) {
-        return {
-          ...data,
-          state: {
-            state: "error",
-            error: "Odometer miles field is not a number",
-          },
-        };
-      }
-
-      const difference = odometerMiles - previousOdometerMiles;
-      if (difference < 0) {
-        return {
-          ...data,
-          state: { state: "error", error: "Odometer miles have decreased" },
-        };
-      }
-
-      previousOdometerMiles = odometerMiles;
-      estimatedTripMiles = difference;
-      break;
-    }
-    case "trip": {
-      if (data.tripMiles === "") {
-        return {
-          ...data,
-          state: { state: "error", error: "Trip miles field is empty" },
-        };
-      }
-      const tripMiles = parseNumber(data.tripMiles);
-      if (isNaN(tripMiles)) {
-        return {
-          ...data,
-          state: { state: "error", error: "Trip miles field is not a number" },
-        };
-      }
-
-      estimatedTripMiles = tripMiles;
-      break;
-    }
+  if (data.miles === "") {
+    return {
+      ...data,
+      state: { state: "error", error: "Miles field is empty" },
+    };
+  }
+  let miles = parseNumber(data.miles);
+  if (isNaN(miles)) {
+    return {
+      ...data,
+      state: {
+        state: "error",
+        error: "Miles field is not a number",
+      },
+    };
   }
 
-  const estimatedMPG = estimatedTripMiles / gallons;
+  if (data.mode === "odometer") {
+    const difference = miles - data.previousOdometerMiles;
+    if (difference < 0) {
+      return {
+        ...data,
+        state: { state: "error", error: "Odometer miles have decreased" },
+      };
+    }
+
+    data.previousOdometerMiles = miles;
+    miles = difference;
+  }
+
+  const estimatedMPG = miles / gallons;
   if (isNaN(estimatedMPG)) {
     return {
       ...data,
@@ -152,10 +122,7 @@ function handleSubmit(data: FormData, app: AppContextType): FormData {
     };
   }
 
-  app.setRecords([
-    ...app.records,
-    new Record(data.date, gallons, estimatedTripMiles),
-  ]);
+  app.setRecords([...app.records, new Record(data.date, gallons, miles)]);
 
   return {
     ...data,
