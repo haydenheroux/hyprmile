@@ -40,7 +40,7 @@ export function Nav() {
 
   return (
     <>
-      <nav className="w-screen px-2">
+      <nav className="mx-auto">
         <Inline>{Object.keys(icons).map((page) => icons[page as Page])}</Inline>
       </nav>
       <hr />
