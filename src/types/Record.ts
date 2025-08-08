@@ -24,9 +24,7 @@ export function createSummaryRecord(records: Record[]): Record {
   return createRecord(totalGallons, totalMiles);
 }
 
-export function recentOdometerMiles(
-  records: Record[]
-): number | null {
+export function recentOdometerMiles(records: Record[]): number | null {
   let odometerMiles = null;
   for (const record of records) {
     if (record.odometerMiles) {
@@ -43,4 +41,23 @@ export function hasOdometerMiles(records: Record[]): boolean {
     }
   }
   return false;
+}
+
+export function fillOdometerMiles(records: Record[]): Record[] {
+  let odometer: number | undefined;
+
+  return records.map((record) => {
+    if (record.odometerMiles) {
+      odometer = record.odometerMiles;
+      return record;
+    } else if (odometer) {
+      odometer += record.miles;
+      return {
+        ...record,
+        odometerMiles: odometer,
+      };
+    } else {
+      return record;
+    }
+  });
 }

@@ -7,7 +7,11 @@ import NumericInput from "../../components/form/NumericInput.tsx";
 import Block from "../../components/form/Block.tsx";
 import { formatYYYYMMDD } from "../../utils/date.ts";
 import Inline from "../../components/form/Inline.tsx";
-import { hasOdometerMiles, recentOdometerMiles } from "../../types/Record.ts";
+import {
+  fillOdometerMiles,
+  hasOdometerMiles,
+  recentOdometerMiles,
+} from "../../types/Record.ts";
 
 function Input() {
   const app = useAppContext();
@@ -25,7 +29,8 @@ function Input() {
 
   useEffect(() => {
     if (data.state === "complete") {
-      setRecords.current([...records.current, data.record]);
+      const newRecords = fillOdometerMiles([...records.current, data.record]);
+      setRecords.current(newRecords);
     }
   }, [data.state, data]);
 

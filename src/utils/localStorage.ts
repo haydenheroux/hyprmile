@@ -1,4 +1,4 @@
-import { type Record } from "../types/Record";
+import { createRecord, type Record } from "../types/Record";
 
 class LocalStorage<T> {
   private readonly key: string;
@@ -38,12 +38,12 @@ export const RecordsRepository = new LocalStorage(
         miles: number;
         odometerMiles?: number;
       };
-      records.push({
-        date: new Date(date),
-        gallons,
-        miles,
-        odometerMiles,
-      } as Record);
+
+      const record = createRecord(gallons, miles);
+      record.date = new Date(date);
+      record.odometerMiles = odometerMiles;
+
+      records.push(record);
     }
     return records;
   },
