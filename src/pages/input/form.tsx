@@ -124,7 +124,7 @@ function handleSubmit(data: FormData): FormData {
   const record = createRecord(gallons, tripMiles);
   record.date = data.date;
   if (data.mode === "odometer") {
-    record.odometerMiles = miles;
+    record.odometer = miles;
   }
 
   data = {

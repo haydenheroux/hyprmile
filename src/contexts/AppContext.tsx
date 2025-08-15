@@ -6,11 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { Page } from "../types/Page";
-import {
-  hasOdometerMiles,
-  recentOdometerMiles,
-  type Record,
-} from "../types/Record";
+import { currentOdometer, type Record } from "../types/Record";
 import { RecordsRepository } from "../utils/localStorage";
 
 export interface AppContextType {
@@ -18,8 +14,8 @@ export interface AppContextType {
   setPage: (page: Page) => void;
   records: Record[];
   setRecords: (records: Record[]) => void;
-  odometerOverride: number | null;
-  setOdometerOverride: (odometerMilesOverride: number | null) => void;
+  odometerOverride?: number;
+  setOdometerOverride: (odometerMilesOverride?: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,8 +23,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: ReactNode }) {
   const [page, setPage] = useState<Page>(Page.Input);
   const [records, setRecords] = useState(RecordsRepository.getValue());
-  const [odometerOverride, setOdometerOverride] = useState<number | null>(
-    hasOdometerMiles(records) ? recentOdometerMiles(records) : null,
+  const [odometerOverride, setOdometerOverride] = useState<number | undefined>(
+    currentOdometer(records, undefined),
   );
 
   useEffect(() => RecordsRepository.setValue(records), [records]);

@@ -8,9 +8,8 @@ import Block from "../../components/form/Block.tsx";
 import { formatYYYYMMDD } from "../../utils/date.ts";
 import Inline from "../../components/form/Inline.tsx";
 import {
-  fillOdometerMiles,
-  hasOdometerMiles,
-  recentOdometerMiles,
+  backfillOdometer,
+  currentOdometer,
 } from "../../types/Record.ts";
 
 function Input() {
@@ -23,16 +22,17 @@ function Input() {
   const setRecords = useRef(app.setRecords);
   const records = useRef(app.records);
 
-  const odometer = hasOdometerMiles(records.current)
-    ? recentOdometerMiles(records.current)
-    : app.odometerOverride;
+  const odometer = currentOdometer(records.current, app.odometerOverride);
 
   useEffect(() => {
     if (data.state === "complete") {
-      const newRecords = fillOdometerMiles([...records.current, data.record]);
+      const newRecords = backfillOdometer(
+        [...records.current, data.record],
+        odometer,
+      );
       setRecords.current(newRecords);
     }
-  }, [data.state, data]);
+  }, [data.state, data, odometer]);
 
   return (
     <>
@@ -56,12 +56,12 @@ function Input() {
       <Block>
         <Heading value={"Miles"}>
           <Inline>
-            {data.mode === "odometer" ? (
+            {data.mode === "odometer" && (
               <span className="text-neutral-500">
                 {Miles.format(data.previousOdometer)} mi.
               </span>
-            ) : null}
-            {odometer !== null ? (
+            )}
+            {odometer !== undefined && (
               <button
                 className={`${data.mode === "odometer" ? "button-active" : "button"} text-md p-0.5`}
                 onClick={() =>
@@ -70,7 +70,7 @@ function Input() {
               >
                 Odo.
               </button>
-            ) : null}
+            )}
             <button
               className={`${data.mode === "trip" ? "button-active" : "button"} text-md p-0.5`}
               onClick={() => dispatch({ type: "trip" })}
@@ -92,7 +92,7 @@ function Input() {
         value="Submit"
         onClick={() => dispatch({ type: "submit" })}
       />
-      {data.state === "error" ? (
+      {data.state === "error" && (
         <button
           className="button-error"
           onClick={() => dispatch({ type: "reset" })}
@@ -101,15 +101,15 @@ function Input() {
           <br />
           <span className="text-red-400">{data.error}</span>
         </button>
-      ) : null}
-      {data.state === "complete" ? (
+      )}
+      {data.state === "complete" && (
         <div className="button" onClick={() => dispatch({ type: "reset" })}>
           <span className="text-xl font-bold text-neutral-100 ">
             {MilesPerGallon.formatText(data.record.mpg)} on{" "}
             {formatYYYYMMDD(data.date)}
           </span>
         </div>
-      ) : null}
+      )}
     </>
   );
 }

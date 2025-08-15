@@ -1,10 +1,10 @@
 import { useState } from "react";
 import NumericInput from "../../components/form/NumericInput";
 import { useAppContext } from "../../contexts/AppContext";
-import { hasOdometerMiles } from "../../types/Record";
 import { Miles, parseNumber } from "../../utils/numeric";
 import Block from "../../components/form/Block";
 import Heading from "../../components/form/Heading";
+import { currentOdometer } from "../../types/Record";
 
 function Settings() {
   const app = useAppContext();
@@ -16,9 +16,9 @@ function Settings() {
       <button className="button-active" onClick={() => app.setRecords([])}>
         Clear Records
       </button>
-      {!hasOdometerMiles(app.records) ? (
+      <hr />
+      {currentOdometer(app.records, app.odometerOverride) === undefined && (
         <>
-          <hr />
           <Block>
             <Heading value="Odometer Miles Override" />
             <NumericInput
@@ -32,10 +32,18 @@ function Settings() {
             className="button-active"
             onClick={() => app.setOdometerOverride(parseNumber(odometerMiles))}
           >
-            Set Odometer Miles
+            Set Odometer Override
           </button>
         </>
-      ) : null}
+      )}
+      {currentOdometer(app.records, undefined) === undefined && (
+        <button
+          className="button-active"
+          onClick={() => app.setOdometerOverride(undefined)}
+        >
+          Clear Odometer Override
+        </button>
+      )}
     </>
   );
 }

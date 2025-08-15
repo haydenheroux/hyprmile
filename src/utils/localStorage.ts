@@ -41,7 +41,7 @@ export const RecordsRepository = new LocalStorage(
 
       const record = createRecord(gallons, miles);
       record.date = new Date(date);
-      record.odometerMiles = odometerMiles;
+      record.odometer = odometerMiles;
 
       records.push(record);
     }

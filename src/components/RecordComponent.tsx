@@ -8,19 +8,15 @@ import Inline from "./form/Inline";
 function RecordComponent({ record }: { record: Record }) {
   return (
     <>
-      {record.date ? <Heading value={formatYYYYMMDD(record.date)} /> : null}
+      {record.date && <Heading value={formatYYYYMMDD(record.date)} />}
       <Inline>
         <Numeric value={record.miles} placeholder={0} unit={Miles} />
-        {record.odometerMiles ? (
+        {record.odometer && (
           <>
             <span>@ odo.</span>
-            <Numeric
-              value={record.odometerMiles}
-              placeholder={0}
-              unit={Miles}
-            />
+            <Numeric value={record.odometer} placeholder={0} unit={Miles} />
           </>
-        ) : null}
+        )}
       </Inline>
       <Numeric value={record.gallons} placeholder={0} unit={Gallons} />
       <Numeric value={record.mpg} placeholder={0} unit={MilesPerGallon} />
