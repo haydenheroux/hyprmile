@@ -39,15 +39,8 @@ export function Nav() {
   };
 
   return (
-    <>
-      <div className="w-screen overflow-x-auto">
-        <nav className="flex justify-start sm:justify-center">
-          <Inline>
-            {Object.keys(icons).map((page) => icons[page as Page])}
-          </Inline>
-        </nav>
-      </div>
-      <hr />
-    </>
+    <nav className="flex justify-start sm:justify-center overflow-x-scroll">
+      <Inline>{Object.keys(icons).map((page) => icons[page as Page])}</Inline>
+    </nav>
   );
 }

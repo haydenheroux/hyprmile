@@ -4,7 +4,6 @@ import { AppProvider, useAppContext } from "./contexts/AppContext";
 import { Page } from "./types/Page";
 import Input from "./pages/input/Input";
 import Calculate from "./pages/calculate/Calculate";
-import PageContainer from "./pages/PageContainer";
 import Settings from "./pages/settings/Settings";
 import Records from "./pages/records/Records";
 import Statistics from "./pages/statistics/Statistics";
@@ -12,10 +11,11 @@ import Statistics from "./pages/statistics/Statistics";
 function App() {
   return (
     <AppProvider>
-      <PageContainer>
+      <div className="w-screen lg:w-3xl mx-auto flex flex-col gap-6 mt-6 px-4">
         <Nav />
+        <hr />
         <WhichPage />
-      </PageContainer>
+      </div>
     </AppProvider>
   );
 }
