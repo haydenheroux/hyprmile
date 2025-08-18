@@ -11,7 +11,7 @@ import Statistics from "./pages/statistics/Statistics";
 function App() {
   return (
     <AppProvider>
-      <div className="w-screen lg:w-3xl mx-auto flex flex-col gap-6 mt-6 px-4">
+      <div className="w-screen lg:w-3xl mx-auto flex flex-col gap-6 mt-6 px-6 sm:px-18">
         <Nav />
         <hr />
         <WhichPage />
