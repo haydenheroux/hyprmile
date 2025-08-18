@@ -1,50 +1,42 @@
-import {
-  Gallons,
-  Mileage
-} from "../../utils/numeric";
+import { createEntry, type Entry } from "../../types/Entry";
+import { parseNumber } from "../../utils/numeric";
 
-export type FormState =
-  | { state: "input" }
-  | { state: "error"; reason: string }
-  | { state: "complete" };
-
-export type FormData = {
+type FormFields = {
   date: Date;
-  mode: "odometer" | "trip";
-  odometerMileage: string;
-  tripMileage: string;
+  miles: string;
   gallons: string;
 };
 
-export function defaultFormData(): FormData {
-  return {
-    date: new Date(),
-    mode: "odometer",
-    odometerMileage: "",
-    tripMileage: "",
-    gallons: "",
-  }
-}
+type FormInput =
+  | (FormFields & { mode: "odometer"; previousOdometer: number })
+  | (FormFields & { mode: "trip" });
 
-function formatFormData(data: FormData): FormData {
-  return {
-    ...data,
-    odometerMileage: Mileage.format(data.odometerMileage),
-    tripMileage: Mileage.format(data.tripMileage),
-    gallons: Gallons.format(data.gallons),
-  };
-}
+export type FormData =
+  | (FormInput & { state: "input" })
+  | (FormInput & { state: "error"; error: string })
+  | (FormInput & { state: "complete"; entry: Entry });
+
+export const initialFormData: FormData = {
+  state: "input",
+  date: new Date(),
+  mode: "trip",
+  miles: "",
+  gallons: "",
+};
 
 type FormAction =
+  | { type: "reset" }
   | { type: "date"; value: string }
   | { type: "gallons"; value: string }
-  | { type: "odometer" }
+  | { type: "odometer"; previousOdometer: number }
   | { type: "trip" }
-  | { type: "mileage"; value: string }
-  | { type: "blur" };
+  | { type: "miles"; value: string }
+  | { type: "submit" };
 
 export function formReducer(data: FormData, action: FormAction): FormData {
   switch (action.type) {
+    case "reset":
+      return { ...data, state: "input" };
     case "date": {
       const cleared = action.value === "";
       const date = cleared ? new Date() : new Date(action.value);
@@ -53,19 +45,97 @@ export function formReducer(data: FormData, action: FormAction): FormData {
     case "gallons":
       return { ...data, gallons: action.value };
     case "odometer":
-      return { ...data, mode: "odometer" };
+      return {
+        ...data,
+        mode: "odometer",
+        previousOdometer: action.previousOdometer,
+      };
     case "trip":
       return { ...data, mode: "trip" };
-    case "mileage": {
-      if (data.mode === "odometer") {
-        return { ...data, odometerMileage: action.value };
-      } else {
-        return { ...data, tripMileage: action.value };
-      }
+    case "miles": {
+      return { ...data, miles: action.value };
     }
-    case "blur":
-      return formatFormData(data);
+    case "submit":
+      return handleSubmit(data);
     default:
       return data;
   }
+}
+
+function handleSubmit(data: FormData): FormData {
+  if (data.gallons === "") {
+    return {
+      ...data,
+      state: "error",
+      error: "Gallons field is empty",
+    };
+  }
+  const gallons = parseNumber(data.gallons);
+  if (isNaN(gallons)) {
+    return {
+      ...data,
+      state: "error",
+      error: "Gallons is not a number",
+    };
+  }
+
+  if (data.miles === "") {
+    return {
+      ...data,
+      state: "error",
+      error: "Miles field is empty",
+    };
+  }
+  const miles = parseNumber(data.miles);
+  if (isNaN(miles)) {
+    return {
+      ...data,
+      state: "error",
+      error: "Miles field is not a number",
+    };
+  }
+
+  let tripMiles = miles;
+  let previousOdometer = 0;
+
+  if (data.mode === "odometer") {
+    const difference = miles - data.previousOdometer;
+    if (difference < 0) {
+      return {
+        ...data,
+        state: "error",
+        error: "Odometer miles have decreased",
+      };
+    }
+
+    previousOdometer = miles;
+    tripMiles = difference;
+  }
+
+  const estimatedMPG = tripMiles / gallons;
+  if (isNaN(estimatedMPG)) {
+    return {
+      ...data,
+      state: "error",
+      error: "Miles per gallon is not a number",
+    };
+  }
+
+  const entry = createEntry(gallons, tripMiles);
+  entry.date = data.date;
+  if (data.mode === "odometer") {
+    entry.odometer = miles;
+  }
+
+  data = {
+    ...data,
+    state: "complete",
+    entry: entry,
+  };
+
+  if (data.mode === "odometer") {
+    data.previousOdometer = previousOdometer;
+  }
+
+  return data;
 }

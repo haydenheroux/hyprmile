@@ -1,25 +1,41 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import { View } from "../types/View";
-import { DifferenceBuffer } from "../types/DifferenceBuffer";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { Page } from "../types/Page";
+import { currentOdometer, type Entry } from "../types/Entry";
+import { EntriesRepository } from "../utils/localStorage";
 
 export interface AppContextType {
-  view: View;
-  setView: (view: View) => void;
-  previousOdometerMileage: DifferenceBuffer;
-  setPreviousOdometerMileage: (previousOdometerMiles: DifferenceBuffer) => void;
+  page: Page;
+  setPage: (page: Page) => void;
+  entries: Entry[];
+  setEntries: (entries: Entry[]) => void;
+  odometerOverride?: number;
+  setOdometerOverride: (odometerMilesOverride?: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [view, setView] = useState<View>(View.Input);
-  const [previousOdometerMiles, setPreviousOdometerMiles] =
-    useState<DifferenceBuffer>(new DifferenceBuffer(200_637));
+  const [page, setPage] = useState<Page>(Page.Input);
+  const [entries, setEntries] = useState(EntriesRepository.getValue());
+  const [odometerOverride, setOdometerOverride] = useState<number | undefined>(
+    currentOdometer(entries, undefined),
+  );
+
+  useEffect(() => EntriesRepository.setValue(entries), [entries]);
+
   const ctx: AppContextType = {
-    view,
-    setView,
-    previousOdometerMileage: previousOdometerMiles,
-    setPreviousOdometerMileage: setPreviousOdometerMiles,
+    page,
+    setPage,
+    entries,
+    setEntries,
+    odometerOverride,
+    setOdometerOverride,
   };
 
   return <AppContext.Provider value={ctx}>{children}</AppContext.Provider>;

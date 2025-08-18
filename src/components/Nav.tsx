@@ -1,37 +1,46 @@
 import type { IconType } from "react-icons";
 import { NavIcon } from "./NavIcon";
-import { PiCalculator, PiChartLineUp, PiGasPump } from "react-icons/pi";
-import { View } from "../types/View";
+import { Page } from "../types/Page";
 import { useAppContext } from "../contexts/AppContext";
+import Inline from "./form/Inline";
+import {
+  TbCalculator,
+  TbChartLine,
+  TbNotes,
+  TbPencil,
+  TbSettings,
+} from "react-icons/tb";
 
 export function Nav() {
   const app = useAppContext();
 
-  function createNavIcon(view: View, text: string, Icon: IconType) {
+  function createNavIcon(page: Page, text: string, Icon: IconType) {
     return (
       <NavIcon
         Icon={Icon}
         text={text}
         key={text}
-        onClick={() => app.setView(view)}
-        active={app.view === view}
+        onClick={() => app.setPage(page)}
+        active={app.page === page}
       />
     );
   }
 
   const icons = {
-    [View.Input]: createNavIcon(View.Input, "Input", PiGasPump),
-    [View.Statistics]: createNavIcon(
-      View.Statistics,
+    [Page.Input]: createNavIcon(Page.Input, "Input", TbPencil),
+    [Page.Log]: createNavIcon(Page.Log, "Log", TbNotes),
+    [Page.Statistics]: createNavIcon(
+      Page.Statistics,
       "Statistics",
-      PiChartLineUp,
+      TbChartLine,
     ),
-    [View.Calculate]: createNavIcon(View.Calculate, "Calculate", PiCalculator),
+    [Page.Calculate]: createNavIcon(Page.Calculate, "Calculate", TbCalculator),
+    [Page.Settings]: createNavIcon(Page.Settings, "Settings", TbSettings),
   };
 
   return (
-    <nav className="w-screen my-6 px-2 flex flex-row lg:gap-8 gap-2 justify-center">
-      {Object.keys(icons).map((view) => icons[view as View])}
+    <nav className="flex justify-start sm:justify-center overflow-x-scroll">
+      <Inline>{Object.keys(icons).map((page) => icons[page as Page])}</Inline>
     </nav>
   );
 }

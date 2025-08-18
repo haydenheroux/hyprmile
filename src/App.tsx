@@ -1,32 +1,39 @@
 import "./index.css";
 import { Nav } from "./components/Nav";
 import { AppProvider, useAppContext } from "./contexts/AppContext";
-import { View } from "./types/View";
+import { Page } from "./types/Page";
 import Input from "./pages/input/Input";
+import Calculate from "./pages/calculate/Calculate";
+import Settings from "./pages/settings/Settings";
+import Log from "./pages/log/Log";
+import Statistics from "./pages/statistics/Statistics";
 
 function App() {
   return (
     <AppProvider>
-      <Nav />
-      <hr />
-      <Viewer />
+      <div className="w-screen lg:w-3xl mx-auto flex flex-col gap-6 mt-6 px-6 sm:px-18">
+        <Nav />
+        <hr />
+        <WhichPage />
+      </div>
     </AppProvider>
   );
 }
 
-function Viewer() {
+function WhichPage() {
   const app = useAppContext();
 
-  switch (app.view) {
-    case View.Calculate:
-      // TODO Implement calculate component
-      return <span className="text-neutral-50">Calculate</span>
-    case View.Input:
-      // TODO Implement input component
-      return <Input />
-    case View.Statistics:
-      // TODO Implement statistics component
-      return <span className="text-neutral-50">Statistics</span>
+  switch (app.page) {
+    case Page.Calculate:
+      return <Calculate />;
+    case Page.Input:
+      return <Input />;
+    case Page.Log:
+      return <Log />;
+    case Page.Statistics:
+      return <Statistics />;
+    case Page.Settings:
+      return <Settings />;
   }
 }
 
