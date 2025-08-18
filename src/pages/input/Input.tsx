@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef } from "react";
-import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
+import { Gallons, Miles } from "../../utils/numeric";
 import { formReducer, initialFormData } from "./form.tsx";
 import { useAppContext } from "../../contexts/AppContext";
 import Heading from "../../components/form/Heading";
