@@ -17,9 +17,9 @@ export function NavIcon({ Icon, text, onClick, active }: NavIconProps) {
           onClick();
         }
       }}
-      className={`${active ? "button-active min-w-48 lg:min-w-56" : "button min-w-14"} h-14 border-2 rounded-lg flex justify-center items-center gap-2 transition-[min-width] ease-in-out duration-200`}
+      className={`${active ? "button-active w-48 lg:w-56 delay-200" : "button w-14 delay-0"} h-14 border-2 rounded-lg flex justify-center items-center gap-2 transition-[width] ease-in-out duration-200`}
     >
-      <span className={`transition-[scale] ease-in-out duration-150`}>
+      <span>
         <Icon size={32} />
       </span>
       <span
