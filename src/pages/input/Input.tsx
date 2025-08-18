@@ -40,6 +40,7 @@ function Input() {
         <Heading value={"Date"} />
         <input
           type="date"
+          className="numeric"
           value={formatYYYYMMDD(data.date)}
           onChange={(e) => dispatch({ type: "date", value: e.target.value })}
         />
@@ -57,13 +58,13 @@ function Input() {
         <Heading value={"Miles"}>
           <Inline>
             {data.mode === "odometer" && (
-              <span className="text-neutral-500">
+              <span className="text-neutral-500 numeric">
                 {Miles.format(data.previousOdometer)} mi.
               </span>
             )}
             {odometer !== undefined && (
               <button
-                className={`${data.mode === "odometer" ? "button-active" : "button"} w-14 p-0.5 text-md p-0.5 emphasized`}
+                className={`${data.mode === "odometer" ? "button-active" : "button"} w-14 py-0.5 text-md emphasized`}
                 onClick={() =>
                   dispatch({ type: "odometer", previousOdometer: odometer })
                 }
@@ -97,9 +98,9 @@ function Input() {
           className="button-error"
           onClick={() => dispatch({ type: "reset" })}
         >
-          <span className="text-xl font-bold text-red-300 ">Input Error</span>
+          <span className="text-xl text-red-300 emphasized">Input Error</span>
           <br />
-          <span className="text-red-400">{data.error}</span>
+          <span className="text-red-400 normal">{data.error}</span>
         </button>
       )}
       {data.state === "complete" && (
