@@ -13,7 +13,7 @@ function Settings() {
 
   return (
     <>
-      <button className="button-active" onClick={() => app.setRecords([])}>
+      <button className="button-active emphasized" onClick={() => app.setRecords([])}>
         Clear Records
       </button>
       <hr />
@@ -29,7 +29,7 @@ function Settings() {
             />
           </Block>
           <button
-            className="button-active"
+            className="button-active emphasized"
             onClick={() => app.setOdometerOverride(parseNumber(odometerMiles))}
           >
             Set Odometer Override
@@ -38,7 +38,7 @@ function Settings() {
       )}
       {currentOdometer(app.records, undefined) === undefined && (
         <button
-          className="button-active"
+          className="button-active emphasized"
           onClick={() => app.setOdometerOverride(undefined)}
         >
           Clear Odometer Override

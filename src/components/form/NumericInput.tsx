@@ -14,6 +14,7 @@ function NumericInput({
   return (
     <input
       type="text"
+      className="numeric"
       value={value}
       placeholder={unit.formatText(placeholder)}
       onChange={(e) => setValue(e.target.value)}

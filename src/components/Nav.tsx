@@ -1,15 +1,15 @@
 import type { IconType } from "react-icons";
 import { NavIcon } from "./NavIcon";
-import {
-  PiCalculator,
-  PiChartLineUp,
-  PiArchive,
-  PiGasPump,
-  PiGear,
-} from "react-icons/pi";
 import { Page } from "../types/Page";
 import { useAppContext } from "../contexts/AppContext";
 import Inline from "./form/Inline";
+import {
+  TbCalculator,
+  TbChartLine,
+  TbFiles,
+  TbPencil,
+  TbSettings,
+} from "react-icons/tb";
 
 export function Nav() {
   const app = useAppContext();
@@ -27,15 +27,15 @@ export function Nav() {
   }
 
   const icons = {
-    [Page.Input]: createNavIcon(Page.Input, "Input", PiGasPump),
+    [Page.Input]: createNavIcon(Page.Input, "Input", TbPencil),
     [Page.Statistics]: createNavIcon(
       Page.Statistics,
       "Statistics",
-      PiChartLineUp,
+      TbChartLine,
     ),
-    [Page.Calculate]: createNavIcon(Page.Calculate, "Calculate", PiCalculator),
-    [Page.Records]: createNavIcon(Page.Records, "Records", PiArchive),
-    [Page.Settings]: createNavIcon(Page.Settings, "Settings", PiGear),
+    [Page.Calculate]: createNavIcon(Page.Calculate, "Calculate", TbCalculator),
+    [Page.Records]: createNavIcon(Page.Records, "Records", TbFiles),
+    [Page.Settings]: createNavIcon(Page.Settings, "Settings", TbSettings),
   };
 
   return (

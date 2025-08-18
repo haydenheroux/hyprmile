@@ -63,7 +63,7 @@ function Input() {
             )}
             {odometer !== undefined && (
               <button
-                className={`${data.mode === "odometer" ? "button-active" : "button"} text-md p-0.5`}
+                className={`${data.mode === "odometer" ? "button-active" : "button"} w-14 p-0.5 text-md p-0.5 emphasized`}
                 onClick={() =>
                   dispatch({ type: "odometer", previousOdometer: odometer })
                 }
@@ -72,7 +72,7 @@ function Input() {
               </button>
             )}
             <button
-              className={`${data.mode === "trip" ? "button-active" : "button"} text-md p-0.5`}
+              className={`${data.mode === "trip" ? "button-active" : "button"} w-14 py-0.5 text-md emphasized`}
               onClick={() => dispatch({ type: "trip" })}
             >
               Trip
@@ -88,7 +88,7 @@ function Input() {
       </Block>
       <input
         type="submit"
-        className="button-active"
+        className="button-active emphasized"
         value="Submit"
         onClick={() => dispatch({ type: "submit" })}
       />

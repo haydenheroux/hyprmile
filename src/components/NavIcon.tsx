@@ -23,7 +23,7 @@ export function NavIcon({ Icon, text, onClick, active }: NavIconProps) {
         <Icon size={32} />
       </span>
       <span
-        className={`${active ? "scale-x-100 relative" : "scale-x-0 absolute"} origin-left overflow-hidden text-lg uppercase`}
+        className={`${active ? "scale-x-100 relative" : "scale-x-0 absolute"} origin-left overflow-hidden text-lg uppercase emphasized`}
       >
         {text}
       </span>
