@@ -5,7 +5,7 @@ import { Page } from "./types/Page";
 import Input from "./pages/input/Input";
 import Calculate from "./pages/calculate/Calculate";
 import Settings from "./pages/settings/Settings";
-import Records from "./pages/records/Records";
+import Log from "./pages/log/Log";
 import Statistics from "./pages/statistics/Statistics";
 
 function App() {
@@ -28,8 +28,8 @@ function WhichPage() {
       return <Calculate />;
     case Page.Input:
       return <Input />;
-    case Page.Records:
-      return <Records />;
+    case Page.Log:
+      return <Log />;
     case Page.Statistics:
       return <Statistics />;
     case Page.Settings:

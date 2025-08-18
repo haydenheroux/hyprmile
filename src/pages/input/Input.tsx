@@ -7,10 +7,8 @@ import NumericInput from "../../components/form/NumericInput.tsx";
 import Block from "../../components/form/Block.tsx";
 import { formatYYYYMMDD } from "../../utils/date.ts";
 import Inline from "../../components/form/Inline.tsx";
-import {
-  backfillOdometer,
-  currentOdometer,
-} from "../../types/Record.ts";
+import { backfillOdometer, currentOdometer } from "../../types/Entry.ts";
+import { Page } from "../../types/Page.ts";
 
 function Input() {
   const app = useAppContext();
@@ -19,18 +17,18 @@ function Input() {
   // specifying the type with <FormData, FormAction> creates other type errors
   const [data, dispatch] = useReducer(formReducer, initialFormData);
 
-  const setRecords = useRef(app.setRecords);
-  const records = useRef(app.records);
+  const setEntries = useRef(app.setEntries);
+  const entries = useRef(app.entries);
 
-  const odometer = currentOdometer(records.current, app.odometerOverride);
+  const odometer = currentOdometer(entries.current, app.odometerOverride);
 
   useEffect(() => {
     if (data.state === "complete") {
-      const newRecords = backfillOdometer(
-        [...records.current, data.record],
+      const newEntries = backfillOdometer(
+        [...entries.current, data.entry],
         odometer,
       );
-      setRecords.current(newRecords);
+      setEntries.current(newEntries);
     }
   }, [data.state, data, odometer]);
 
@@ -87,29 +85,46 @@ function Input() {
           placeholder={0.0}
         />
       </Block>
-      <input
-        type="submit"
-        className="button-active emphasized"
-        value="Submit"
-        onClick={() => dispatch({ type: "submit" })}
-      />
+      {data.state === "input" && (
+        <input
+          type="submit"
+          className="button-active emphasized"
+          value="Submit"
+          onClick={() => dispatch({ type: "submit" })}
+        />
+      )}
       {data.state === "error" && (
-        <button
-          className="button-error"
-          onClick={() => dispatch({ type: "reset" })}
-        >
-          <span className="text-xl text-red-300 emphasized">Input Error</span>
-          <br />
-          <span className="text-red-400 normal">{data.error}</span>
-        </button>
+        <>
+          <button
+            className="button-error normal"
+            onClick={() => dispatch({ type: "reset" })}
+          >
+            <span className="emphasized">Error</span> - {data.error}
+          </button>
+        </>
       )}
       {data.state === "complete" && (
-        <div className="button" onClick={() => dispatch({ type: "reset" })}>
-          <span className="text-xl font-bold text-neutral-100 ">
-            {MilesPerGallon.formatText(data.record.mpg)} on{" "}
-            {formatYYYYMMDD(data.date)}
-          </span>
-        </div>
+        <>
+          <Block>
+            <Heading value="Entry Logged" />
+            <span className="normal">
+              Your entry has been successfully logged. You can view all of your
+              entries on the Log page, or reset to log a new one.
+            </span>
+          </Block>
+          <button
+            className="button emphasized"
+            onClick={() => app.setPage(Page.Log)}
+          >
+            View Log
+          </button>
+          <button
+            className="button emphasized"
+            onClick={() => dispatch({ type: "reset" })}
+          >
+            Log New Entry
+          </button>
+        </>
       )}
     </>
   );

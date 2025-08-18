@@ -11,14 +11,14 @@ import {
 } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
 import Block from "../../components/form/Block";
-import { createSummaryRecord } from "../../types/Record";
+import { createSummaryEntry } from "../../types/Entry";
 
 function Calculate() {
   const app = useAppContext();
 
-  const summaryRecord = createSummaryRecord(app.records);
+  const summaryEntry = createSummaryEntry(app.entries);
   const initialMPG =
-    app.records.length > 0 ? MilesPerGallon.formatText(summaryRecord.mpg) : "";
+    app.entries.length > 0 ? MilesPerGallon.formatText(summaryEntry.mpg) : "";
 
   const [miles, setMiles] = useState<string>("");
   const [mpg, setMPG] = useState<string>(initialMPG);

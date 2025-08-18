@@ -1,5 +1,5 @@
+import { createEntry, type Entry } from "../../types/Entry";
 import { parseNumber } from "../../utils/numeric";
-import { createRecord, type Record } from "../../types/Record";
 
 type FormFields = {
   date: Date;
@@ -14,7 +14,7 @@ type FormInput =
 export type FormData =
   | (FormInput & { state: "input" })
   | (FormInput & { state: "error"; error: string })
-  | (FormInput & { state: "complete"; record: Record });
+  | (FormInput & { state: "complete"; entry: Entry });
 
 export const initialFormData: FormData = {
   state: "input",
@@ -121,16 +121,16 @@ function handleSubmit(data: FormData): FormData {
     };
   }
 
-  const record = createRecord(gallons, tripMiles);
-  record.date = data.date;
+  const entry = createEntry(gallons, tripMiles);
+  entry.date = data.date;
   if (data.mode === "odometer") {
-    record.odometer = miles;
+    entry.odometer = miles;
   }
 
   data = {
     ...data,
     state: "complete",
-    record,
+    entry: entry,
   };
 
   if (data.mode === "odometer") {

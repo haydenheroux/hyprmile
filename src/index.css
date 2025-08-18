@@ -25,7 +25,7 @@
   }
 
   .button-error {
-    @apply text-red-100 border-red-950 border-2 focus:outline-none focus:border-blue-400 bg-linear-to-t from-red-950 to-red-900 rounded-md hover:shadow-xl/50 shadow-red-950 p-2;
+    @apply text-red-200 border-red-900 border-2 focus:outline-none focus:border-blue-400 bg-linear-to-t from-red-900 to-red-700 rounded-md hover:shadow-xl/50 shadow-red-900 p-2;
   }
 }
 

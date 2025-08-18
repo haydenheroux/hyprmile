@@ -6,7 +6,7 @@ import Inline from "./form/Inline";
 import {
   TbCalculator,
   TbChartLine,
-  TbFiles,
+  TbNotes,
   TbPencil,
   TbSettings,
 } from "react-icons/tb";
@@ -28,13 +28,13 @@ export function Nav() {
 
   const icons = {
     [Page.Input]: createNavIcon(Page.Input, "Input", TbPencil),
+    [Page.Log]: createNavIcon(Page.Log, "Log", TbNotes),
     [Page.Statistics]: createNavIcon(
       Page.Statistics,
       "Statistics",
       TbChartLine,
     ),
     [Page.Calculate]: createNavIcon(Page.Calculate, "Calculate", TbCalculator),
-    [Page.Records]: createNavIcon(Page.Records, "Records", TbFiles),
     [Page.Settings]: createNavIcon(Page.Settings, "Settings", TbSettings),
   };
 

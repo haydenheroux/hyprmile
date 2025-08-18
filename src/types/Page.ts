@@ -2,7 +2,7 @@ export const Page = {
   Calculate: "Calculate",
   Input: "Input",
   Statistics: "Statistics",
-  Records: "Records",
+  Log: "Log",
   Settings: "Settings",
 } as const;
 

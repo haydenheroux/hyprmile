@@ -1,4 +1,4 @@
-import { createRecord, type Record } from "../types/Record";
+import { createEntry, type Entry } from "../types/Entry";
 
 class LocalStorage<T> {
   private readonly key: string;
@@ -22,29 +22,29 @@ class LocalStorage<T> {
   }
 }
 
-export const RecordsRepository = new LocalStorage(
-  "records",
-  [] as Record[],
+export const EntriesRepository = new LocalStorage(
+  "entries",
+  [] as Entry[],
   (json) => {
-    const parsedRecords = JSON.parse(json);
-    const canIterate = Array.isArray(parsedRecords);
+    const parsedEntries = JSON.parse(json);
+    const canIterate = Array.isArray(parsedEntries);
     if (!canIterate) return [];
 
-    const records = [];
-    for (const parsedRecord of parsedRecords) {
-      const { date, gallons, miles, odometerMiles } = parsedRecord as {
+    const entries = [];
+    for (const parsedEntry of parsedEntries) {
+      const { date, gallons, miles, odometerMiles } = parsedEntry as {
         date: string;
         gallons: number;
         miles: number;
         odometerMiles?: number;
       };
 
-      const record = createRecord(gallons, miles);
-      record.date = new Date(date);
-      record.odometer = odometerMiles;
+      const entry = createEntry(gallons, miles);
+      entry.date = new Date(date);
+      entry.odometer = odometerMiles;
 
-      records.push(record);
+      entries.push(entry);
     }
-    return records;
+    return entries;
   },
 );
