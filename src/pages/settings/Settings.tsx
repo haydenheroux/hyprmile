@@ -18,10 +18,13 @@ function Settings() {
         <span className="normal">
           Remove all entries from your log. This action is permanent.
         </span>
+        <button
+          className="button emphasized"
+          onClick={() => app.setEntries([])}
+        >
+          Clear Entries
+        </button>
       </Block>
-      <button className="button emphasized" onClick={() => app.setEntries([])}>
-        Clear Entries
-      </button>
       {currentOdometer(app.entries, app.odometerOverride) === undefined && (
         <>
           <Block>
@@ -46,12 +49,19 @@ function Settings() {
         </>
       )}
       {currentOdometer(app.entries, undefined) === undefined && (
-        <button
-          className="button emphasized"
-          onClick={() => app.setOdometerOverride(undefined)}
-        >
-          Clear Odometer Override
-        </button>
+        <Block>
+          <Heading value="Clear Odometer Miles Override" />
+          <span className="normal">
+            Remove your manually-set odometer reading. Disables mileage tracking
+            using odometer miles.
+          </span>
+          <button
+            className="button emphasized"
+            onClick={() => app.setOdometerOverride(undefined)}
+          >
+            Clear Odometer Override
+          </button>
+        </Block>
       )}
     </>
   );
