@@ -9,6 +9,7 @@ import { formatYYYYMMDD } from "../../utils/date.ts";
 import Inline from "../../components/form/Inline.tsx";
 import { backfillOdometer, currentOdometer } from "../../types/Entry.ts";
 import { Page } from "../../types/Page.ts";
+import NumericInputGroup from "../../components/form/NumericInputGroup.tsx";
 
 function Input() {
   const app = useAppContext();
@@ -45,7 +46,7 @@ function Input() {
       </Block>
       <Block>
         <Heading value={"Gallons"} />
-        <NumericInput
+        <NumericInputGroup 
           value={data.gallons}
           setValue={(value) => dispatch({ type: "gallons", value: value })}
           unit={Gallons}

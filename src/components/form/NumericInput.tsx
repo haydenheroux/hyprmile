@@ -1,16 +1,18 @@
 import { parseNumber, type NumericUnit } from "../../utils/numeric";
 
+interface NumericInputProps {
+  value: string;
+  setValue: (value: string) => void;
+  unit: NumericUnit;
+  placeholder: number;
+};
+
 function NumericInput({
   value,
   setValue,
   unit,
   placeholder,
-}: {
-  value: string;
-  setValue: (value: string) => void;
-  unit: NumericUnit;
-  placeholder: number;
-}) {
+}: NumericInputProps) {
   return (
     <input
       type="text"

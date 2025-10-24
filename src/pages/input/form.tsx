@@ -4,7 +4,7 @@ import { parseNumber } from "../../utils/numeric";
 type FormFields = {
   date: Date;
   miles: string;
-  gallons: string;
+  gallons: string[];
 };
 
 type FormInput =
@@ -21,13 +21,13 @@ export const initialFormData: FormData = {
   date: new Date(),
   mode: "trip",
   miles: "",
-  gallons: "",
+  gallons: [""],
 };
 
 type FormAction =
   | { type: "reset" }
   | { type: "date"; value: string }
-  | { type: "gallons"; value: string }
+  | { type: "gallons"; value: string[] }
   | { type: "odometer"; previousOdometer: number }
   | { type: "trip" }
   | { type: "miles"; value: string }
@@ -63,15 +63,15 @@ export function formReducer(data: FormData, action: FormAction): FormData {
 }
 
 function handleSubmit(data: FormData): FormData {
-  if (data.gallons === "") {
+  if (data.gallons.every(str => str.length === 0)) {
     return {
       ...data,
       state: "error",
       error: "Gallons field is empty",
     };
   }
-  const gallons = parseNumber(data.gallons);
-  if (isNaN(gallons)) {
+  const gallons = data.gallons.map(parseNumber);
+  if (gallons.some(n => Number.isNaN(n))) {
     return {
       ...data,
       state: "error",
@@ -112,7 +112,8 @@ function handleSubmit(data: FormData): FormData {
     tripMiles = difference;
   }
 
-  const estimatedMPG = tripMiles / gallons;
+  const tripGallons = gallons.reduce((sum, n) => sum + n, 0);
+  const estimatedMPG = tripMiles / tripGallons;
   if (isNaN(estimatedMPG)) {
     return {
       ...data,
@@ -121,7 +122,7 @@ function handleSubmit(data: FormData): FormData {
     };
   }
 
-  const entry = createEntry(gallons, tripMiles);
+  const entry = createEntry(tripGallons, tripMiles);
   entry.date = data.date;
   if (data.mode === "odometer") {
     entry.odometer = miles;
