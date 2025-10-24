@@ -16,13 +16,13 @@ export type FormData =
   | (FormInput & { state: "error"; error: string })
   | (FormInput & { state: "complete"; entry: Entry });
 
-export const initialFormData: FormData = {
+export const initialFormData = () => ({
   state: "input",
   date: new Date(),
   mode: "trip",
   miles: "",
   gallons: [""],
-};
+} as FormData);
 
 type FormAction =
   | { type: "reset" }
@@ -36,7 +36,7 @@ type FormAction =
 export function formReducer(data: FormData, action: FormAction): FormData {
   switch (action.type) {
     case "reset":
-      return { ...data, state: "input" };
+      return initialFormData();
     case "date": {
       const cleared = action.value === "";
       const date = cleared ? new Date() : new Date(action.value);
@@ -70,7 +70,7 @@ function handleSubmit(data: FormData): FormData {
       error: "Gallons field is empty",
     };
   }
-  const gallons = data.gallons.map(parseNumber);
+  const gallons = data.gallons.filter(str => str.length > 0).map(parseNumber);
   if (gallons.some(n => Number.isNaN(n))) {
     return {
       ...data,

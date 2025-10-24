@@ -16,7 +16,7 @@ function Input() {
 
   // TODO useReducer is unable to infer the that the type of action is FormAction, and explicitly
   // specifying the type with <FormData, FormAction> creates other type errors
-  const [data, dispatch] = useReducer(formReducer, initialFormData);
+  const [data, dispatch] = useReducer(formReducer, initialFormData());
 
   const setEntries = useRef(app.setEntries);
   const entries = useRef(app.entries);
