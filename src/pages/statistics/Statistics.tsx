@@ -1,4 +1,4 @@
-import Block from "../../components/form/Block";
+import { Card } from "../../components/form/Block";
 import Heading from "../../components/form/Heading";
 import Numeric from "../../components/form/Numeric";
 import NoEntries from "../../components/NoEntries";
@@ -12,22 +12,22 @@ function SummaryStatistics(entries: Entry[]) {
   return (
     <div className="h-32 flex flex-col sm:flex-row gap-4 items-stretch">
       <div className="button flex-1">
-        <Block>
+        <Card>
           <Heading value="Average MPG" />
           <Numeric value={summary.mpg} placeholder={0} unit={MilesPerGallon} />
-        </Block>
+        </Card>
       </div>
       <div className="button flex-1">
-        <Block>
+        <Card>
           <Heading value="Total Miles" />
           <Numeric value={summary.miles} placeholder={0} unit={Miles} />
-        </Block>
+        </Card>
       </div>
       <div className="button flex-1">
-        <Block>
+        <Card>
           <Heading value="Total Gallons" />
           <Numeric value={summary.gallons} placeholder={0} unit={Gallons} />
-        </Block>
+        </Card>
       </div>
     </div>
   );

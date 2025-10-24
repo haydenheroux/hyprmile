@@ -1,4 +1,4 @@
-import Block from "../../components/form/Block";
+import { Card } from "../../components/form/Block";
 import { useAppContext } from "../../contexts/AppContext";
 import type { Entry } from "../../types/Entry";
 import NoEntries from "../../components/NoEntries";
@@ -11,8 +11,9 @@ import { Gallons, Miles, MilesPerGallon } from "../../utils/numeric";
 function EntryComponent({ entry }: { entry: Entry }) {
   return (
     <div className="button">
-      <Block>
+      <Card>
         {entry.date && <Heading value={formatYYYYMMDD(entry.date)} />}
+        <div className="mb-0.25" />
         <Inline>
           <Numeric value={entry.miles} placeholder={0} unit={Miles} />
           {entry.odometer && (
@@ -24,7 +25,7 @@ function EntryComponent({ entry }: { entry: Entry }) {
         </Inline>
         <Numeric value={entry.gallons} placeholder={0} unit={Gallons} />
         <Numeric value={entry.mpg} placeholder={0} unit={MilesPerGallon} />
-      </Block>
+      </Card>
     </div>
   );
 }
