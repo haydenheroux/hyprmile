@@ -20,6 +20,10 @@
     @apply text-neutral-100 border-neutral-950 border-2 focus:outline-none focus:border-blue-400 bg-linear-to-t from-neutral-950 to-neutral-900 rounded-md shadow-xl/25 hover:shadow-xl/50 shadow-neutral-800 p-2;
   }
 
+  .button-selected {
+    @apply text-neutral-100 border-neutral-950 border-2 focus:outline-none focus:border-blue-400 bg-linear-to-t from-neutral-950 to-[#1e1e1e] rounded-md shadow-xl/50 shadow-neutral-800 p-2;
+  }
+
   .button-active {
     @apply text-neutral-950 border-neutral-200 border-2 focus:outline-none focus:border-blue-400 bg-linear-to-t from-neutral-200 to-neutral-100 rounded-md shadow-xl/25 hover:shadow-xl/50 shadow-neutral-600 p-2;
   }
