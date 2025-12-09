@@ -6,6 +6,7 @@ import Inline from "./form/Inline";
 import {
   TbCalculator,
   TbChartLine,
+  TbMap,
   TbNotes,
   TbPencil,
   TbSettings,
@@ -29,6 +30,7 @@ export function Nav() {
   const icons = {
     [Page.Input]: createNavIcon(Page.Input, "Input", TbPencil),
     [Page.Log]: createNavIcon(Page.Log, "Log", TbNotes),
+    [Page.Locations]: createNavIcon(Page.Locations, "Locations", TbMap),
     [Page.Statistics]: createNavIcon(
       Page.Statistics,
       "Statistics",

@@ -48,3 +48,15 @@ export const EntriesRepository = new LocalStorage(
     return entries;
   },
 );
+
+export const LocationsRepository = new LocalStorage(
+  "locations",
+  {} as Record<string, Location>,
+  (json) => {
+    const parsed = JSON.parse(json);
+    if (parsed && typeof parsed === "object") {
+      return parsed;
+    }
+    return {};
+  },
+);

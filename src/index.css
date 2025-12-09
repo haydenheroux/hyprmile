@@ -10,7 +10,7 @@
     @apply w-64 lg:w-96 mx-auto text-neutral-800;
   }
 
-  input {
+  input, select {
     @apply text-neutral-100 border-neutral-800 border-2 rounded-lg h-10 p-2;
   }
 }

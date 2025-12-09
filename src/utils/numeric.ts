@@ -47,4 +47,5 @@ function createNumericUnit(
 export const Miles = createNumericUnit(1, suffix("mi."));
 export const MilesPerGallon = createNumericUnit(1, suffix("mpg."));
 export const Gallons = createNumericUnit(3, suffix("gal."));
+export const Minutes = createNumericUnit(1, suffix("min."));
 export const Dollars = createNumericUnit(2, (s) => `$${s}`);

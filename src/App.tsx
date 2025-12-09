@@ -7,6 +7,7 @@ import Calculate from "./pages/calculate/Calculate";
 import Settings from "./pages/settings/Settings";
 import Log from "./pages/log/Log";
 import Statistics from "./pages/statistics/Statistics";
+import Locations from "./pages/locations/Locations";
 
 function App() {
   return (
@@ -28,12 +29,14 @@ function WhichPage() {
       return <Calculate />;
     case Page.Input:
       return <Input />;
+    case Page.Locations:
+      return <Locations />
     case Page.Log:
       return <Log />;
-    case Page.Statistics:
-      return <Statistics />;
     case Page.Settings:
       return <Settings />;
+    case Page.Statistics:
+      return <Statistics />;
   }
 }
 
