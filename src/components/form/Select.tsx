@@ -1,28 +1,16 @@
-import { useEffect, useState } from "react";
-
 interface SelectProps {
+  selection: string;
   options: string[];
   onChange: (value: string) => void;
+  allowEmpty?: boolean;
 }
 
-function Select({ options, onChange }: SelectProps) {
-  const [selected, setSelected] = useState<string>(options[0]);
-
-  useEffect(() => {
-    const selected = options[0];
-    onChange(selected);
-    setSelected(selected);
-  }, [onChange, options]);
-
-  const selectedChanged: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
-    const selected = e.target.value;
-    onChange(selected);
-    setSelected(selected);
-  }
+function Select({ selection, options, onChange, allowEmpty = true }: SelectProps) {
+  const allOptions = allowEmpty ? ["", ...options] : options;
 
   return (
-    <select value={selected} onChange={selectedChanged}>
-      {options.map((option) => (
+    <select value={selection} onChange={(e) => onChange(e.target.value)}>
+      {allOptions.map((option) => (
         <option key={option} value={option}>
           {option}
         </option>

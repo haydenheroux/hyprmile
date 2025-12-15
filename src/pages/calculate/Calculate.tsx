@@ -12,6 +12,7 @@ import {
 import { useAppContext } from "../../contexts/AppContext";
 import Block from "../../components/form/Block";
 import { createSummaryEntry } from "../../types/Entry";
+import SelectGroup from "../../components/form/SelectGroup";
 
 function Calculate() {
   const app = useAppContext();
@@ -31,6 +32,7 @@ function Calculate() {
     <>
       <Block>
         <Heading value={"Total Miles"} />
+        <SelectGroup options={Object.keys(app.locations)} onChange={() => {}} />
         <NumericInput
           value={miles}
           placeholder={0}

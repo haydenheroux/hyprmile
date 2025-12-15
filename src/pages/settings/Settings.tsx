@@ -25,6 +25,18 @@ function Settings() {
           Clear Entries
         </button>
       </Block>
+      <Block>
+        <Heading value="Clear Locations" />
+        <span className="normal">
+          Remove all locations from your log. This action is permanent.
+        </span>
+        <button
+          className="button emphasized"
+          onClick={() => app.setLocations({})}
+        >
+          Clear Locations
+        </button>
+      </Block>
       {currentOdometer(app.entries, app.odometerOverride) === undefined && (
         <>
           <Block>
