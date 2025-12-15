@@ -29,8 +29,8 @@ export function Nav() {
 
   const icons = {
     [Page.Input]: createNavIcon(Page.Input, "Input", TbPencil),
-    [Page.Log]: createNavIcon(Page.Log, "Log", TbNotes),
     [Page.Locations]: createNavIcon(Page.Locations, "Locations", TbMap),
+    [Page.Log]: createNavIcon(Page.Log, "Log", TbNotes),
     [Page.Statistics]: createNavIcon(
       Page.Statistics,
       "Statistics",
