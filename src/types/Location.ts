@@ -2,17 +2,17 @@ export type Locations = Record<string, Location>;
 
 export type Location = {
   name: string;
-  to: LocationToLocationLookup;
+  to: RouteLookup;
 };
 
-export type LocationToLocation = {
+export type Route = {
   distance: number;
   time: number;
   mpg?: number;
 };
 
-interface LocationToLocationLookup {
-  [name: string]: LocationToLocation;
+interface RouteLookup {
+  [name: string]: Route;
 }
 
 export function createIfAbsent(locations: Record<string, Location>, name: string): Record<string, Location> {
@@ -27,7 +27,7 @@ export function createIfAbsent(locations: Record<string, Location>, name: string
   return { ...locations };
 }
 
-export function updateTo(locations: Record<string, Location>, first: string, second: string, to: LocationToLocation): Record<string, Location> {
+export function updateRoute(locations: Record<string, Location>, first: string, second: string, route: Route): Record<string, Location> {
   if (!locations) {
     return locations;
   }
@@ -35,8 +35,8 @@ export function updateTo(locations: Record<string, Location>, first: string, sec
   locations = createIfAbsent(locations, first);
   locations = createIfAbsent(locations, second);
 
-  locations[first].to[second] = to;
-  locations[second].to[first] = to;
+  locations[first].to[second] = route;
+  locations[second].to[first] = route;
 
   return locations;
 }

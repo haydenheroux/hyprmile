@@ -4,7 +4,7 @@ import Heading from "../../components/form/Heading";
 import NumericInput from "../../components/form/NumericInput";
 import { Miles, MilesPerGallon, Minutes, parseNumber } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
-import { createIfAbsent, updateTo, type LocationToLocation } from "../../types/Location";
+import { createIfAbsent, updateRoute, type Route } from "../../types/Location";
 import Select from "../../components/form/Select";
 
 function Locations() {
@@ -21,14 +21,14 @@ function Locations() {
   const addLocation = () => {
     let newLocations = createIfAbsent(locations.current, name);
     if (destination && parseNumber(distance) && parseNumber(time)) {
-      const to: LocationToLocation = {
+      const route: Route = {
         distance: parseNumber(distance),
         time: parseNumber(time),
       };
       if (parseNumber(mpg)) {
-        to.mpg = parseNumber(mpg);
+        route.mpg = parseNumber(mpg);
       }
-      newLocations = updateTo(newLocations, name, destination, to);
+      newLocations = updateRoute(newLocations, name, destination, route);
     }
     setLocations.current(newLocations);
   };
@@ -51,7 +51,7 @@ function Locations() {
       {name && destinations.length > 0 && (
         <Block>
           <Heading value={"Distance"} />
-          <Select options={destinations} onChange={(v) => setDestination(v)} />
+          <Select options={destinations} onChange={(v) => setDestination(v)} allowEmpty={false} />
           <NumericInput
             value={distance}
             setValue={(value) => setDistance(value)}
