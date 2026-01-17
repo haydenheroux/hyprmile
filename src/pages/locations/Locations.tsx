@@ -20,14 +20,16 @@ function Locations() {
 
   const addLocation = () => {
     let newLocations = createIfAbsent(locations.current, name);
+    console.log(destination, parseNumber(distance), parseNumber(time));
     if (destination && parseNumber(distance) && parseNumber(time)) {
       const route: Route = {
-        distance: parseNumber(distance),
+        miles: parseNumber(distance),
         time: parseNumber(time),
       };
       if (parseNumber(mpg)) {
         route.mpg = parseNumber(mpg);
       }
+      console.log(route);
       newLocations = updateRoute(newLocations, name, destination, route);
     }
     setLocations.current(newLocations);
@@ -51,7 +53,7 @@ function Locations() {
       {name && destinations.length > 0 && (
         <Block>
           <Heading value={"Distance"} />
-          <Select options={destinations} onChange={(v) => setDestination(v)} allowEmpty={false} />
+          <Select selection={destination} options={destinations} onChange={(v) => setDestination(v)} allowEmpty={false} />
           <NumericInput
             value={distance}
             setValue={(value) => setDistance(value)}

@@ -13,6 +13,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import Block from "../../components/form/Block";
 import { createSummaryEntry } from "../../types/Entry";
 import SelectGroup from "../../components/form/SelectGroup";
+import { accountedForGallons } from "../../types/Location";
 
 function Calculate() {
   const app = useAppContext();
@@ -21,6 +22,7 @@ function Calculate() {
   const initialMPG =
     app.entries.length > 0 ? MilesPerGallon.formatText(summaryEntry.mpg) : "";
 
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [miles, setMiles] = useState<string>("");
   const [mpg, setMPG] = useState<string>(initialMPG);
   const [price, setPrice] = useState<string>("");
@@ -32,7 +34,7 @@ function Calculate() {
     <>
       <Block>
         <Heading value={"Total Miles"} />
-        <SelectGroup options={Object.keys(app.locations)} onChange={() => {}} />
+        <SelectGroup options={Object.keys(app.locations)} onChange={(value) => setSelectedLocations(value)} />
         <NumericInput
           value={miles}
           placeholder={0}
@@ -51,6 +53,11 @@ function Calculate() {
       </Block>
       <Block>
         <Heading value={"Estimated Gallons"} />
+        <Numeric
+          value={accountedForGallons(app.locations, selectedLocations)}
+          placeholder={0}
+          unit={Gallons}
+        />
         <Numeric value={estimatedGallons} placeholder={0} unit={Gallons} />
       </Block>
       <Block>
