@@ -18,7 +18,6 @@ function Locations() {
   useEffect(() => {
     const savedRoute = getRoute(app.locations, locationName, destinationName);
     if (savedRoute) {
-      console.log(`Got saved route from ${locationName} to ${destinationName}`, savedRoute);
       setRoute(savedRoute);
     } else {
       setRoute(null);
