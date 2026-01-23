@@ -54,6 +54,18 @@ export function accountedForMiles(locations: Record<string, Location>, visited: 
   return miles;
 }
 
+export function getRoute(locations: Record<string, Location>, start: string, end: string): Route | null {
+  const startLocation = locations[start];
+  if (!startLocation) {
+    return null;
+  }
+  const route = locations[start].to[end];
+  if (!route) {
+    return null;
+  }
+  return route;
+}
+
 function countGallons(locations: Record<string, Location>, start: string, end: string): number {
   // NOTE(hayden): Start is the same as end -> no movement -> no gallons consumed
   if (start == end) {

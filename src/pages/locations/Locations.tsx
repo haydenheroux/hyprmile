@@ -1,48 +1,43 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Block from "../../components/form/Block";
 import Heading from "../../components/form/Heading";
-import NumericInput from "../../components/form/NumericInput";
-import { Miles, MilesPerGallon, Minutes, parseNumber } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
-import { createIfAbsent, updateRoute, type Route } from "../../types/Location";
+import { createIfAbsent, getRoute, updateRoute, type Route } from "../../types/Location";
 import Select from "../../components/form/Select";
+import RouteData from "./RouteData";
 
 function Locations() {
   const [locationName, setLocationName] = useState<string>("");
   const [destinationName, setDestinationName] = useState<string>("");
-  const [routeDistance, setRouteDistance] = useState<string>("");
-  const [routeTime, setRouteTime] = useState<string>("");
-  const [routeMPG, setRouteMPG] = useState<string>("");
 
   const app = useAppContext();
   const locations = useRef(app.locations);
   const setLocations = useRef(app.setLocations);
+  const [route, setRoute] = useState<Route | null>(null);
 
-  const getRouteValues = () => {
-    const parsedValues = {
-      distance: parseNumber(routeDistance),
-      time: parseNumber(routeTime),
-      mpg: parseNumber(routeMPG),
-    };
-    return {
-      ...parsedValues,
-      hasDistanceTime: parsedValues.distance && parsedValues.time,
-      hasMpg: parsedValues.mpg,
+  useEffect(() => {
+    const savedRoute = getRoute(app.locations, locationName, destinationName);
+    if (savedRoute) {
+      console.log(`Got saved route from ${locationName} to ${destinationName}`, savedRoute);
+      setRoute(savedRoute);
+    } else {
+      setRoute(null);
     }
-  };
+  }, [app, locationName, destinationName]);
 
   const addLocation = () => {
+    if (route === null) {
+      // TODO(hayden): Throw error
+      return;
+    }
     let newLocations = createIfAbsent(locations.current, locationName);
-    const routeValues = getRouteValues();
-    if (destinationName && routeValues.hasDistanceTime) {
-      const route: Route = {
-        miles: parseNumber(routeDistance),
-        time: parseNumber(routeTime),
-      };
-      if (parseNumber(routeMPG)) {
-        route.mpg = parseNumber(routeMPG);
-      }
-      newLocations = updateRoute(newLocations, locationName, destinationName, route);
+    if (destinationName && route.miles && route.time) {
+      newLocations = updateRoute(
+        newLocations,
+        locationName,
+        destinationName,
+        route,
+      );
     }
     setLocations.current(newLocations);
   };
@@ -63,28 +58,18 @@ function Locations() {
         />
       </Block>
       {locationName && destinations.length > 0 && (
-        <Block>
-          <Heading value={"Distance"} />
-          <Select selection={destinationName} options={destinations} onChange={(v) => setDestinationName(v)} allowEmpty={false} />
-          <NumericInput
-            value={routeDistance}
-            setValue={(value) => setRouteDistance(value)}
-            unit={Miles}
-            placeholder={0.0}
-          />
-          <NumericInput
-            value={routeTime}
-            setValue={(value) => setRouteTime(value)}
-            unit={Minutes}
-            placeholder={0.0}
-          />
-          <NumericInput
-            value={routeMPG}
-            setValue={(value) => setRouteMPG(value)}
-            unit={MilesPerGallon}
-            placeholder={0.0}
-          />
-        </Block>
+        <>
+          <Block>
+            <Heading value={"To"} />
+            <Select
+              selection={destinationName}
+              options={destinations}
+              onChange={(v) => setDestinationName(v)}
+              allowEmpty={false}
+            />
+          </Block>
+          <RouteData route={route} setRoute={setRoute} />
+        </>
       )}
       <input
         type="submit"
