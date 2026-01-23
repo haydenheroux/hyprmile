@@ -16,15 +16,15 @@ export interface RouteDataProps {
 }
 
 function RouteData({ route, setRoute }: RouteDataProps) {
-  const [routeMiles, setRouteMiles] = useState<string>(route?.miles.toString() ?? "");
-  const [routeTime, setRouteTime] = useState<string>(route?.time.toString() ?? "");
-  const [routeMPG, setRouteMPG] = useState<string>(route?.mpg?.toString() ?? "");
+  const [routeMiles, setRouteMiles] = useState<string>(Miles.formatText(route?.miles.toString() ?? ""));
+  const [routeTime, setRouteTime] = useState<string>(Minutes.formatText(route?.time.toString() ?? ""));
+  const [routeMPG, setRouteMPG] = useState<string>(MilesPerGallon.formatText(route?.mpg?.toString() ?? ""));
 
   useEffect(() => {
-    setRouteMiles(route?.miles.toString() ?? "");
-    setRouteTime(route?.time.toString() ?? "");
-    setRouteMPG(route?.mpg?.toString() ?? "");
-  }, [route]);
+    setRouteMiles(Miles.formatText(route?.miles.toString() ?? ""));
+    setRouteTime(Minutes.formatText(route?.time.toString() ?? ""));
+    setRouteMPG(MilesPerGallon.formatText(route?.mpg?.toString() ?? ""));
+  }, [route?.miles, route?.time, route?.mpg]);
 
   const updateRoute = (newRoute: Partial<Route>) => {
     setRoute({
