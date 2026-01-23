@@ -32,8 +32,6 @@ export function updateRoute(locations: Record<string, Location>, first: string, 
     return locations;
   }
 
-  console.log(route);
-
   locations = createIfAbsent(locations, first);
   locations = createIfAbsent(locations, second);
 
@@ -56,17 +54,32 @@ export function accountedForMiles(locations: Record<string, Location>, visited: 
   return miles;
 }
 
-export function accountedForGallons(locations: Record<string, Location>, visited: string[]): number {
-  console.log(locations);
+function countGallons(locations: Record<string, Location>, start: string, end: string): number {
+  // NOTE(hayden): Start is the same as end -> no movement -> no gallons consumed
+  if (start == end) {
+    return 0.0;
+  }
+  const route = locations[start].to[end];
+  // NOTE(hayden): If the route does not exist, the gallons cannot be counted
+  // TODO(hayden): Check for route existence using a more robust method
+  if (!route) {
+    return 0.0;
+  }
+  // NOTE(hayden): If the route does not have a defined MPG, the gallons cannot be counted
+  // TODO(hayden): Check for MPG existence using a more robust method
+  if (route.mpg === undefined) {
+    return 0.0;
+  }
+
+  return route.miles / route.mpg;
+}
+
+export function countAllGallons(locations: Record<string, Location>, visited: string[]): number {
   let gallons = 0;
   for (let i = 1; i < visited.length; ++i) {
-    const first = visited[i-1];
-    const second = visited[i];
-    const route = locations[first].to[second];
-    if (route.mpg !== undefined) {
-      gallons += route.miles / route.mpg;
-      console.log(`${first} to ${second} could calculate gallons ${route.miles} / ${route.mpg}`);
-    }
+    const start = visited[i-1];
+    const end = visited[i];
+    gallons += countGallons(locations, start, end);
   }
   return gallons;
 }

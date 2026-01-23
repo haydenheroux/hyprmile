@@ -10,7 +10,6 @@ function SelectGroup({ options, onChange }: SelectGroupProps) {
   const [selections, setSelections] = useState<string[]>([]);
 
   const select = (index: number | null) => {
-
     return (value: string) => {
       const newSelections = [...selections];
       if (index == null) {
@@ -30,9 +29,9 @@ function SelectGroup({ options, onChange }: SelectGroupProps) {
   return (
     <>
       {selections.map((selection, index) => (
-        <Select key={index} selection={selection} options={options} onChange={select(index)} />
+        <Select key={index} selection={selection} options={options} onChange={select(index)} standalone={false} />
       ))}
-      {showEmpty && <Select selection="" options={options} onChange={select(null)} />}
+      {showEmpty && <Select selection="" options={options} onChange={select(null)} standalone={false} />}
     </>
   );
 }

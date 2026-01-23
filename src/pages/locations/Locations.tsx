@@ -8,35 +8,47 @@ import { createIfAbsent, updateRoute, type Route } from "../../types/Location";
 import Select from "../../components/form/Select";
 
 function Locations() {
-  const [name, setName] = useState<string>("");
-  const [destination, setDestination] = useState<string>("");
-  const [distance, setDistance] = useState<string>("");
-  const [time, setTime] = useState<string>("");
-  const [mpg, setMPG] = useState<string>("");
+  const [locationName, setLocationName] = useState<string>("");
+  const [destinationName, setDestinationName] = useState<string>("");
+  const [routeDistance, setRouteDistance] = useState<string>("");
+  const [routeTime, setRouteTime] = useState<string>("");
+  const [routeMPG, setRouteMPG] = useState<string>("");
 
   const app = useAppContext();
   const locations = useRef(app.locations);
   const setLocations = useRef(app.setLocations);
 
+  const getRouteValues = () => {
+    const parsedValues = {
+      distance: parseNumber(routeDistance),
+      time: parseNumber(routeTime),
+      mpg: parseNumber(routeMPG),
+    };
+    return {
+      ...parsedValues,
+      hasDistanceTime: parsedValues.distance && parsedValues.time,
+      hasMpg: parsedValues.mpg,
+    }
+  };
+
   const addLocation = () => {
-    let newLocations = createIfAbsent(locations.current, name);
-    console.log(destination, parseNumber(distance), parseNumber(time));
-    if (destination && parseNumber(distance) && parseNumber(time)) {
+    let newLocations = createIfAbsent(locations.current, locationName);
+    const routeValues = getRouteValues();
+    if (destinationName && routeValues.hasDistanceTime) {
       const route: Route = {
-        miles: parseNumber(distance),
-        time: parseNumber(time),
+        miles: parseNumber(routeDistance),
+        time: parseNumber(routeTime),
       };
-      if (parseNumber(mpg)) {
-        route.mpg = parseNumber(mpg);
+      if (parseNumber(routeMPG)) {
+        route.mpg = parseNumber(routeMPG);
       }
-      console.log(route);
-      newLocations = updateRoute(newLocations, name, destination, route);
+      newLocations = updateRoute(newLocations, locationName, destinationName, route);
     }
     setLocations.current(newLocations);
   };
 
   const destinations = Object.keys(locations.current).filter(
-    (destination) => name !== destination,
+    (destination) => locationName !== destination,
   );
 
   return (
@@ -46,29 +58,29 @@ function Locations() {
         <input
           type="text"
           className="numeric"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={locationName}
+          onChange={(e) => setLocationName(e.target.value)}
         />
       </Block>
-      {name && destinations.length > 0 && (
+      {locationName && destinations.length > 0 && (
         <Block>
           <Heading value={"Distance"} />
-          <Select selection={destination} options={destinations} onChange={(v) => setDestination(v)} allowEmpty={false} />
+          <Select selection={destinationName} options={destinations} onChange={(v) => setDestinationName(v)} allowEmpty={false} />
           <NumericInput
-            value={distance}
-            setValue={(value) => setDistance(value)}
+            value={routeDistance}
+            setValue={(value) => setRouteDistance(value)}
             unit={Miles}
             placeholder={0.0}
           />
           <NumericInput
-            value={time}
-            setValue={(value) => setTime(value)}
+            value={routeTime}
+            setValue={(value) => setRouteTime(value)}
             unit={Minutes}
             placeholder={0.0}
           />
           <NumericInput
-            value={mpg}
-            setValue={(value) => setMPG(value)}
+            value={routeMPG}
+            setValue={(value) => setRouteMPG(value)}
             unit={MilesPerGallon}
             placeholder={0.0}
           />

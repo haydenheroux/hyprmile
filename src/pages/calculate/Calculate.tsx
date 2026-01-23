@@ -5,60 +5,36 @@ import Numeric from "../../components/form/Numeric";
 import {
   Dollars,
   Gallons,
-  Miles,
-  MilesPerGallon,
   parseNumber,
 } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
 import Block from "../../components/form/Block";
-import { createSummaryEntry } from "../../types/Entry";
 import SelectGroup from "../../components/form/SelectGroup";
-import { accountedForGallons } from "../../types/Location";
+import { countAllGallons } from "../../types/Location";
 
 function Calculate() {
   const app = useAppContext();
 
-  const summaryEntry = createSummaryEntry(app.entries);
-  const initialMPG =
-    app.entries.length > 0 ? MilesPerGallon.formatText(summaryEntry.mpg) : "";
-
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [miles, setMiles] = useState<string>("");
-  const [mpg, setMPG] = useState<string>(initialMPG);
-  const [price, setPrice] = useState<string>("");
 
-  const estimatedGallons = parseNumber(miles) / parseNumber(mpg);
+  const gallons = countAllGallons(app.locations, selectedLocations);
+
+  const [price, setPrice] = useState<string>("");
   const pricePerGallon = parseNumber(price);
 
   return (
     <>
       <Block>
-        <Heading value={"Total Miles"} />
+        <Heading value={"Trip Locations"} />
         <SelectGroup options={Object.keys(app.locations)} onChange={(value) => setSelectedLocations(value)} />
-        <NumericInput
-          value={miles}
-          placeholder={0}
-          setValue={(value) => setMiles(value)}
-          unit={Miles}
-        />
       </Block>
       <Block>
-        <Heading value={"Estimated Miles per Gallon"} />
-        <NumericInput
-          value={mpg}
-          placeholder={0}
-          setValue={(value) => setMPG(value)}
-          unit={MilesPerGallon}
-        />
-      </Block>
-      <Block>
-        <Heading value={"Estimated Gallons"} />
+        <Heading value={"Trip Gallons"} />
         <Numeric
-          value={accountedForGallons(app.locations, selectedLocations)}
+          value={countAllGallons(app.locations, selectedLocations)}
           placeholder={0}
           unit={Gallons}
         />
-        <Numeric value={estimatedGallons} placeholder={0} unit={Gallons} />
       </Block>
       <Block>
         <Heading value={"Price per Gallon"} />
@@ -72,7 +48,7 @@ function Calculate() {
       <Block>
         <Heading value={"Total Price"} />
         <Numeric
-          value={estimatedGallons * pricePerGallon}
+          value={gallons * pricePerGallon}
           placeholder={0}
           unit={Dollars}
         />
