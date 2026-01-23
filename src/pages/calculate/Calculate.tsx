@@ -4,13 +4,13 @@ import NumericInput from "../../components/form/NumericInput";
 import Numeric from "../../components/form/Numeric";
 import {
   Dollars,
-  Gallons,
   parseNumber,
 } from "../../utils/numeric";
 import { useAppContext } from "../../contexts/AppContext";
 import Block from "../../components/form/Block";
 import SelectGroup from "../../components/form/SelectGroup";
 import { countAllGallons } from "../../types/Location";
+import { GasTankGauge } from "../../components/GasTankGauge";
 
 function Calculate() {
   const app = useAppContext();
@@ -18,6 +18,7 @@ function Calculate() {
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
   const gallons = countAllGallons(app.locations, selectedLocations);
+  const tankPercent = (16.0 - gallons) / 16.0;
 
   const [price, setPrice] = useState<string>("");
   const pricePerGallon = parseNumber(price);
@@ -30,11 +31,7 @@ function Calculate() {
       </Block>
       <Block>
         <Heading value={"Trip Gallons"} />
-        <Numeric
-          value={countAllGallons(app.locations, selectedLocations)}
-          placeholder={0}
-          unit={Gallons}
-        />
+        <GasTankGauge fillPercentage={tankPercent} />
       </Block>
       <Block>
         <Heading value={"Price per Gallon"} />
