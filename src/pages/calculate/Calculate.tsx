@@ -31,7 +31,9 @@ function Calculate() {
       </Block>
       <Block>
         <Heading value={"Trip Gallons"} />
+        <div className="mx-auto">
         <GasTankGauge fillPercentage={tankPercent} />
+        </div>
       </Block>
       <Block>
         <Heading value={"Price per Gallon"} />
