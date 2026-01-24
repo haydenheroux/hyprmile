@@ -18,6 +18,32 @@ export const GasTankGauge: React.FC<GasTankGaugeProps> = ({
   const x = centerX + radius * Math.cos(Math.PI - angle);
   const y = centerY - radius * Math.sin(angle);
 
+  const thick = 8; // start width
+  const thin = 3; // end width
+
+  const dx = x - centerX;
+  const dy = y - centerY;
+  const len = Math.sqrt(dx * dx + dy * dy);
+
+  // unit perpendicular vector
+  const px = -dy / len;
+  const py = dx / len;
+
+  // half widths
+  const t0 = thick / 2;
+  const t1 = thin / 2;
+
+  // path points
+  const x1a = centerX + px * t0;
+  const y1a = centerY + py * t0;
+  const x1b = centerX - px * t0;
+  const y1b = centerY - py * t0;
+
+  const x2a = x + px * t1;
+  const y2a = y + py * t1;
+  const x2b = x - px * t1;
+  const y2b = y - py * t1;
+
   return (
     <svg width={size} height={size / 2}>
       <path
@@ -49,14 +75,16 @@ export const GasTankGauge: React.FC<GasTankGaugeProps> = ({
           />
         );
       })}
-      <line
-        x1={centerX}
-        y1={centerY}
-        x2={x}
-        y2={y}
-        stroke="#ea580c"
-        strokeWidth={6}
-        strokeLinecap="round"
+      <path
+        d={`
+    M ${x1a} ${y1a}
+    L ${x2a} ${y2a}
+    Q ${x} ${y} ${x2b} ${y2b}
+    L ${x1b} ${y1b}
+    Q ${centerX} ${centerY} ${x1a} ${y1a}
+    Z
+  `}
+        fill="#ea580c"
       />
     </svg>
   );
