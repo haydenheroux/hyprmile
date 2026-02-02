@@ -20,11 +20,18 @@ function RouteData({ route, setRoute }: RouteDataProps) {
   const [routeTime, setRouteTime] = useState<string>(Minutes.formatText(route?.time.toString() ?? ""));
   const [routeMPG, setRouteMPG] = useState<string>(MilesPerGallon.formatText(route?.mpg?.toString() ?? ""));
 
+  // BUG(hayden): NumericInput replaces entered number with formatted string on change, rather than on blur
   useEffect(() => {
-    setRouteMiles(Miles.formatText(route?.miles.toString() ?? ""));
-    setRouteTime(Minutes.formatText(route?.time.toString() ?? ""));
-    setRouteMPG(MilesPerGallon.formatText(route?.mpg?.toString() ?? ""));
-  }, [route?.miles, route?.time, route?.mpg]);
+    if (parseNumber(routeMiles) !== route?.miles) {
+      setRouteMiles(Miles.formatText(route?.miles.toString() ?? ""));
+    }
+    if (parseNumber(routeTime) !== route?.time) {
+      setRouteTime(Minutes.formatText(route?.time.toString() ?? ""));
+    }
+    if (parseNumber(routeMPG) !== route?.mpg) {
+      setRouteMPG(MilesPerGallon.formatText(route?.mpg?.toString() ?? ""));
+    }
+  }, [route?.miles, route?.time, route?.mpg, routeMiles, routeTime, routeMPG]);
 
   const updateRoute = (newRoute: Partial<Route>) => {
     setRoute({
@@ -52,7 +59,7 @@ function RouteData({ route, setRoute }: RouteDataProps) {
 
   return (
     <Block>
-      <Heading value={"Route Data"} />
+      <Heading value="Route Data" />
       <NumericInput
         value={routeMiles}
         setValue={(value) => updateRouteMiles(value)}

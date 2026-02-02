@@ -11,13 +11,14 @@ import Block from "../../components/form/Block";
 import SelectGroup from "../../components/form/SelectGroup";
 import { countAllGallons } from "../../types/Location";
 import { GasTankGauge } from "../../components/GasTankGauge";
+import { summaryMPG } from "../../types/Entry";
 
 function Calculate() {
   const app = useAppContext();
 
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-
-  const gallons = countAllGallons(app.locations, selectedLocations);
+  const fallbackMPG = summaryMPG(app.entries);
+  const gallons = countAllGallons(app.locations, selectedLocations, fallbackMPG);
   const tankPercent = (16.0 - gallons) / 16.0;
 
   const [price, setPrice] = useState<string>("");

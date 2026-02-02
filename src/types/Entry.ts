@@ -24,6 +24,11 @@ export function createSummaryEntry(entries: Entry[]): Entry {
   return createEntry(totalGallons, totalMiles);
 }
 
+export function summaryMPG(entries: Entry[]): number {
+  const entry = createSummaryEntry(entries);
+  return entry.mpg;
+}
+
 export function currentOdometer(
   entries: Entry[],
   odometerInit: number | undefined,

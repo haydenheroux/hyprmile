@@ -66,7 +66,11 @@ export function getRoute(locations: Record<string, Location>, start: string, end
   return route;
 }
 
-function countGallons(locations: Record<string, Location>, start: string, end: string): number {
+function routeMPG(route: Route, fallbackMPG: number): number {
+  return route?.mpg ?? fallbackMPG;
+}
+
+function countGallons(locations: Record<string, Location>, start: string, end: string, fallbackMPG: number): number {
   // NOTE(hayden): Start is the same as end -> no movement -> no gallons consumed
   if (start == end) {
     return 0.0;
@@ -74,24 +78,22 @@ function countGallons(locations: Record<string, Location>, start: string, end: s
   const route = locations[start].to[end];
   // NOTE(hayden): If the route does not exist, the gallons cannot be counted
   // TODO(hayden): Check for route existence using a more robust method
+  // TODO(hayden): This needs to be fixed to display an error if the route does not exist
+  // TODO(hayden): Pre-condition that a location's following selections must be valid?
   if (!route) {
     return 0.0;
   }
-  // NOTE(hayden): If the route does not have a defined MPG, the gallons cannot be counted
-  // TODO(hayden): Check for MPG existence using a more robust method
-  if (route.mpg === undefined) {
-    return 0.0;
-  }
+  const mpg = routeMPG(route, fallbackMPG);
 
-  return route.miles / route.mpg;
+  return route.miles / mpg;
 }
 
-export function countAllGallons(locations: Record<string, Location>, visited: string[]): number {
+export function countAllGallons(locations: Record<string, Location>, visited: string[], fallbackMPG: number): number {
   let gallons = 0;
   for (let i = 1; i < visited.length; ++i) {
     const start = visited[i-1];
     const end = visited[i];
-    gallons += countGallons(locations, start, end);
+    gallons += countGallons(locations, start, end, fallbackMPG);
   }
   return gallons;
 }
